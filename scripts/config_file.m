@@ -4,11 +4,10 @@ theta = linspace(0,2*pi,17);
 theta(1) = 2*pi;
 xDes = [0:150:4800];
 
-        circleDistance = 3000;               % distance from base to haltere 
-        circleRadius = 150;                 % radius of haltere   
+circleDistance = 3000;               % distance from base to haltere 
+circleRadius = 150;                 % radius of haltere   
         
 n = 16;
-        
 % colorscheme
 redPurple = [158,1,66
 213,62,79

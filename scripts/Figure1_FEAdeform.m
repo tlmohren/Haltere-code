@@ -4,8 +4,8 @@ addpathFolderStructureHaltere()
 run('config_file.m')
 
 %%
-loadName = 'figureS2_deformMesh';
-saveName = 'figureS2_deformMesh';
+loadName = 'figure1_deform';
+saveName = 'figure1_deform';
 
 renew_data_load = false
 if renew_data_load
@@ -83,7 +83,7 @@ axOpts1 = {'XGrid','On','XLim',[0,0.2],'XTick',[0:0.05:0.2]};
 axOpts2 = {'XGrid','On','XLim',[0,0.2],'XTick',[0:0.05:0.2]}; 
 axOpts3 = {'XGrid','On','XLim',[0,0.2],'XTick',[0:0.05:0.2]}; 
 
-lineSpec = {'-','-o','-','-+','-','-d'};
+lineSpec = {'-','o','--','+','-.','x'};
 
 legend_entries = {'sphere','sphere 10','ellipsoid hor','ellipsoid hor 10', 'ellipsoid ver', 'ellipsoid ver 10'};
 
@@ -268,92 +268,7 @@ for j = 1:size(x,1)
 end
 
 
-[z,y,x] = ellipsoid(0,0,0,948,300,300,16);
-subplot(312); hold on 
-	sb = surf(Xb,Yb,Zb,Cb);
-        set(sb,surfParamBackground{:})
-    s2 = surf(XjDiff,YjDiff,ZjDiff,CjDiff);
-        set(s2,surfParamForeground{:})
-    s1 = surf(x+5e3,y,z,C);
-        set(s1,surfParamBackground{:})
-    s3 = surf( xOMdiff +5000+ totDiff(Imax ,1)*1.1 *OOP_mult ,...
-            yOMdiff+ totDiff(Imax ,2)*1.1*OOP_mult,...
-            zOMdiff+ totDiff(Imax ,3)*1.1*OOP_mult,...
-            C);
-        set(s3,surfParamForeground{:})
 
-
-        shading faceted
-        axis tight;  axis off; axis equal
-        xlabel('x');ylabel('y');zlabel('z')
-        view(40,40)
-        
-%twist 
-angles = [0.8,0,0];
-eul_1 = euler_angle('X',angles(1))^-1;
-eul_2 = euler_angle('Y',angles(2))^-1;
-eul_3 = euler_angle('Z',angles(3))^-1;
-
-for j = 1:size(x,1)
-    for k = 1:size(x,2)
-        xyzTemp = [x(j,k), y(j,k), z(j,k) ];
-        xyzT = eul_1*eul_2*eul_3*xyzTemp'; 
-        xOMdiff(j,k) = xyzT(1);
-        yOMdiff(j,k) = xyzT(2);
-        zOMdiff(j,k) = xyzT(3);
-    end
-end
-
-for j = 1:size(Xb,1)
-    angleTemp = angles*j/size(Xb,1);
-%     eul_1 = [ 1       0                     0;...
-%                 0,  cos( angleTemp(1) ),  - sin(  angleTemp(1) )  ; ...
-%                0   sin(  angleTemp(1) ) cos(  angleTemp(1) )  ]^-1;
-%     eul_2 = [cos(  angleTemp(2))      0       sin( angleTemp(2)) ; ...
-%                 0              1       0 ;...
-%                 -sin( angleTemp(2))    0        cos(  angleTemp(2))]^-1;
-%     eul_3 = [cos(  angleTemp(3))   sin(  angleTemp(3))    0 ; ...
-%                  -sin(  angleTemp(3)) cos(  angleTemp(3))     0 ;...
-%                  0          0               1]^-1;
-         
-    eul_1 = euler_angle('X',angleTemp(1))^-1;
-    eul_2 = euler_angle('Y',angleTemp(2))^-1;
-    eul_3 = euler_angle('Z',angleTemp(3))^-1;
-
-    for k = 1:size(Xb,2)
-        xyzTemp = [Xb(j,k), Yb(j,k), Zb(j,k) ];
-        xyzT = eul_1*eul_2*eul_3*xyzTemp'; 
-        Xtwist(j,k) = xyzT(1);
-        Ytwist(j,k) = xyzT(2);
-        Ztwist(j,k) = xyzT(3);
-    end
-end
-
-Ctwist = ones(size(Cb));
-Ctwist(1,1) = -1.5;
-Ctwist(1,2) = 1.5;
-[z,y,x] = ellipsoid(0,0,0,948,300,300,16);
-
-subplot(313); hold on   
-%     plot stalks 
-	sb = surf(Xb,Yb,Zb,Cb);
-        set(sb,surfParamBackgroundTwistStalk{:})
-    s2 = surf(Xtwist,Ytwist,Ztwist,-Ctwist);
-        set(s2,surfParamForeground{:})
-        colormap(strainScheme)%     colorbar
-    s1 = surf(x+5e3,y,z,C);
-        set(s1,surfParamBackgroundTwist{:})
-    s3 = surf( xOMdiff +5000 ,...
-            yOMdiff,...
-            zOMdiff,...
-            C);
-        set(s3,surfParamForeground{:})
-
-        shading faceted
-        axis tight;  axis off; axis equal
-        xlabel('x');ylabel('y');zlabel('z')
-        view(40,40)
-        
 
         
         
