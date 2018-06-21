@@ -6,7 +6,7 @@ addpathFolderStructureHaltere()
 %% 
 loadDataName = 'figure1_FEAaxis';
 saveDataName = 'figure1_FEAaxis';
-renew_data_load =  true
+renew_data_load =  false
 if renew_data_load
     FEA(1).name = 'Haltere_CraneFly_Sphere_Om0';
     for j =  1:length(FEA)

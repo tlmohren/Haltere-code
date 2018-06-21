@@ -4,8 +4,8 @@ addpathFolderStructureHaltere()
 run('config_file.m')
 
 %%
-loadName = 'figureS2_deformMesh';
-saveName = 'figureS2_deformMesh';
+loadName = 'figure1_deform';
+saveName = 'figure1_deform';
 
 renew_data_load = false
 if renew_data_load

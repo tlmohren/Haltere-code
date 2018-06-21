@@ -3,9 +3,9 @@ addpathFolderStructureHaltere()
 run('config_file.m')
 
 %% load mesh position data
-loadName = 'figure1_FEAaxis';
-saveName = 'figure1_FEAaxis';
-renew_data_load =  true
+loadName = 'figure1_FEAlegend';
+saveName = 'figure1_FEAlegend';
+renew_data_load =  false
 if renew_data_load
     FEA(1).name = 'Haltere_CraneFly_Sphere_Om0';
     FEA(2).name = 'Haltere_CraneFly_ellipsoidHor_Om0';
