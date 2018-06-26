@@ -44,29 +44,39 @@ end
 %% deformation in angles 
 
 fig1 = figure();
-    width = 2;     % Width in inches,   find column width in paper 
+    width = 3;     % Width in inches,   find column width in paper 
     height = 3;    % Height in inches
     set(fig1, 'Position', [fig1.Position(1:2) width*100, height*100]); %<- Set size
 
 t = 0:0.001:0.35;
-labels = {'$\Delta \phi$','$\Delta \theta$','$\Delta \gamma$'};
+
+
+labels = {'Top and bottom strain','left and right strain'};
 axOpts1 = {'XGrid','On','XLim',[0,0.2],'XTick',[0:0.05:0.2]}; 
 axOpts2 = {'XGrid','On','XLim',[0,0.2],'XTick',[0:0.05:0.2]}; 
 axOpts3 = {'XGrid','On','XLim',[0,0.2],'XTick',[0:0.05:0.2]}; 
 
-lineSpec = {'-','o','--','+','-.','x'};
+lineSpec = {'o','-','+','-','x','-'};
 
 legend_entries = {'sphere','sphere 10','ellipsoid hor','ellipsoid hor 10', 'ellipsoid ver', 'ellipsoid ver 10'};
 
 for j = 1:length(FEA)/2
     subplot(211); hold on 
-        plot(t, FEA(j*2-1).strain( FEA(j*2-1).topInds, :) , lineSpec{j*2-1})
-        plot(t, FEA(j*2).strain( FEA(j*2-1).topInds, :) , lineSpec{j*2-1})
-    j
+        plot(t, FEA(j*2-1).strain( FEA(j*2).topInds, :) , lineSpec{j*2-1})
+        plot(t, FEA(j*2).strain( FEA(j*2).topInds, :) , lineSpec{j*2})
+        ylabel( labels{2} );
+        ax = gca();
+        set(ax,axOpts2{:})
     subplot(212); hold on 
-        plot(t, FEA(j*2-1).strain( FEA(j*2-1).sideInds, :) , lineSpec{j*2-1})
-        plot(t, FEA(j*2).strain( FEA(j*2-1).sideInds, :) , lineSpec{j*2-1})
+        plot(t, FEA(j*2-1).strain( FEA(j*2).sideInds, :) , lineSpec{j*2-1})
+        plot(t, FEA(j*2).strain( FEA(j*2).sideInds, :) , lineSpec{j*2})
+        ylabel( labels{2} );
+        ax = gca();
+        set(ax,axOpts2{:})
 end
+legend(legend_entries)
+        
+        
 % 
 %% Setting paper size for saving 
 

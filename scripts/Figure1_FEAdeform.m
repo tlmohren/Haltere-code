@@ -83,7 +83,7 @@ axOpts1 = {'XGrid','On','XLim',[0,0.2],'XTick',[0:0.05:0.2]};
 axOpts2 = {'XGrid','On','XLim',[0,0.2],'XTick',[0:0.05:0.2]}; 
 axOpts3 = {'XGrid','On','XLim',[0,0.2],'XTick',[0:0.05:0.2]}; 
 
-lineSpec = {'-','-o','-','-+','-','-d'};
+lineSpec = {':','-','o','-','+','-'};
 
 legend_entries = {'sphere','sphere 10','ellipsoid hor','ellipsoid hor 10', 'ellipsoid ver', 'ellipsoid ver 10'};
 
