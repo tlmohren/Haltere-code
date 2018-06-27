@@ -4,17 +4,18 @@ addpathFolderStructureHaltere()
 run('config_file.m')
 
 %%
-loadName = 'figure1_deform';
-saveName = 'figure1_deform';
+loadName = 'figure5_deform';
+saveName = 'figure5_deform';
 
-renew_data_load = false
+renew_data_load = true
 if renew_data_load
     FEA(1).name = 'Haltere_CraneFly_Sphere_Om0';
     FEA(2).name = 'Haltere_CraneFly_Sphere_Om10';
-    FEA(3).name = 'Haltere_CraneFly_ellipsoidHor_Om0';
-    FEA(4).name = 'Haltere_CraneFly_ellipsoidHor_Om10';
-    FEA(5).name = 'Haltere_CraneFly_ellipsoidVer_Om0';
-    FEA(6).name = 'Haltere_CraneFly_ellipsoidVer_Om10';   
+%     FEA(3).name = 'Haltere_CraneFly_ellipsoidHor_Om0';
+%     FEA(4).name = 'Haltere_CraneFly_ellipsoidHor_Om10';
+    FEA(3).name = 'Haltere_CraneFly_ellipsoidVer_Om0';
+    FEA(4).name = 'Haltere_CraneFly_ellipsoidVer_Om10';   
+    FEA(5).name = 'Haltere_CraneFly_ellipsoidVerCrossStalk_Om10';
     for j =  1:length(FEA)
         tic
         [~, FEA(j).strain, ~] = loadCSV( ['data' filesep  FEA(j).name], { 'eXX' });
@@ -77,50 +78,37 @@ fig1 = figure();
     height = 3;    % Height in inches
     set(fig1, 'Position', [fig1.Position(1:2) width*100, height*100]); %<- Set size
 
-deformLabels = {'$\Delta \phi$','$\Delta \theta$','$\Delta \gamma$'};
+t = 0:0.001:0.35;
+labels = {'$\Delta \phi$','$\Delta \theta$','$\Delta \gamma$'};
+axOpts1 = {'XGrid','On','XLim',[0,0.2],'XTick',[0:0.05:0.2]}; 
+axOpts2 = {'XGrid','On','XLim',[0,0.2],'XTick',[0:0.05:0.2]}; 
+axOpts3 = {'XGrid','On','XLim',[0,0.2],'XTick',[0:0.05:0.2]}; 
 
-lineCols = linspecer(4);
-lineOpts(1).st = {'LineStyle','-',...
-            'Color',lineCols(1,:)};
-lineOpts(2).st = {'LineStyle','-',...
-            'Color',lineCols(2,:)};
-lineOpts(3).st = {'LineStyle','-',...
-            'Color',lineCols(3,:)};
-lineOpts(4).st = {'LineStyle','-',...
-            'Color',lineCols(4,:)};
-        
+lineSpec = {':','-','o','-','+','-'};
+
 legend_entries = {'sphere','sphere 10','ellipsoid hor','ellipsoid hor 10', 'ellipsoid ver', 'ellipsoid ver 10'};
 
-% t_plot = 1
 for j = 1:length(FEA)/2
+    j
     subplot(3,1,1); hold on 
-        p1 = plot( t_plot, FEA(j*2-1).yAngle(It) );
-        p2 = plot( t_plot, FEA(j*2).yAngle(It) );
-        ylabel( deformLabels{1} );
+        plot(t,FEA(j*2-1).yAngle , lineSpec{j*2-1})
+        plot(t,FEA(j*2).yAngle , lineSpec{j*2})
+        ylabel( labels{1} );
         ax = gca();
-        set(ax,axOptsNoT{:})
-%         legend(legend_entries)
-        set(p1, lineOpts(1).st{:})
-        set(p2, lineOpts(j+1).st{:})
-        
+        set(ax,axOpts1{:})
+        legend(legend_entries)
     subplot(312); hold on 
-        p1 = plot( t_plot, FEA(j*2-1).zAngle(It) );
-        p2 = plot( t_plot, FEA(j*2).zAngle(It) );
-        ylabel( deformLabels{2} );
+        plot(t,FEA(j*2-1).zAngle,  lineSpec{j*2-1} )
+        plot(t,FEA(j*2).zAngle , lineSpec{j*2} )
+        ylabel( labels{2} );
         ax = gca();
-        set(ax,axOptsNoT{:})
-        set(p1, lineOpts(1).st{:})
-        set(p2, lineOpts(j+1).st{:})
-        
+        set(ax,axOpts2{:})
     subplot(313); hold on 
-        p1 = plot( t_plot, FEA(j*2-1).twistAngle(It) );
-        p2 = plot( t_plot, FEA(j*2).twistAngle(It) )  ;
-        
-        xlabel('Time (s)'); ylabel( deformLabels{3} );
+        plot(t,FEA(j*2-1).twistAngle,  lineSpec{j*2-1})
+        plot(t,FEA(j*2).twistAngle , lineSpec{j*2})
+        xlabel('Time (s)'); ylabel( labels{3} );
         ax = gca();
-        set(ax,axOpts{:})
-        set(p1, lineOpts(1).st{:})
-        set(p2, lineOpts(j+1).st{:})
+        set(ax,axOpts3{:})
 end
 
 %% Setting paper size for saving 
@@ -294,6 +282,8 @@ subplot(312); hold on
             zOMdiff+ totDiff(Imax ,3)*1.1*OOP_mult,...
             C);
         set(s3,surfParamForeground{:})
+
+
         shading faceted
         axis tight;  axis off; axis equal
         xlabel('x');ylabel('y');zlabel('z')
@@ -317,6 +307,16 @@ end
 
 for j = 1:size(Xb,1)
     angleTemp = angles*j/size(Xb,1);
+%     eul_1 = [ 1       0                     0;...
+%                 0,  cos( angleTemp(1) ),  - sin(  angleTemp(1) )  ; ...
+%                0   sin(  angleTemp(1) ) cos(  angleTemp(1) )  ]^-1;
+%     eul_2 = [cos(  angleTemp(2))      0       sin( angleTemp(2)) ; ...
+%                 0              1       0 ;...
+%                 -sin( angleTemp(2))    0        cos(  angleTemp(2))]^-1;
+%     eul_3 = [cos(  angleTemp(3))   sin(  angleTemp(3))    0 ; ...
+%                  -sin(  angleTemp(3)) cos(  angleTemp(3))     0 ;...
+%                  0          0               1]^-1;
+         
     eul_1 = euler_angle('X',angleTemp(1))^-1;
     eul_2 = euler_angle('Y',angleTemp(2))^-1;
     eul_3 = euler_angle('Z',angleTemp(3))^-1;
@@ -355,6 +355,9 @@ subplot(313); hold on
         xlabel('x');ylabel('y');zlabel('z')
         view(40,40)
         
+
+        
+        
 %% Setting paper size for saving 
 
 set(gca, 'LooseInset', get(gca(), 'TightInset')); % remove whitespace around figure
@@ -366,9 +369,9 @@ left = (papersize(1)- width)/2;
 bottom = (papersize(2)- height)/2;
 myfiguresize = [left, bottom, width, height];
 set(fig2, 'PaperPosition', myfiguresize);
-print(fig2, ['figs' filesep 'Figure1_deformMesh' ], '-dpng', '-r600');
+print(fig2, ['figs' filesep 'Figure5_deformMesh' ], '-dpng', '-r600');
 stupid_ratio = 15/16;
 myfiguresize = [left, bottom, width*stupid_ratio, height*stupid_ratio];
 set(fig2, 'PaperPosition', myfiguresize);
-print(fig2, ['figs' filesep 'Figure1_deformMesh'], '-dsvg', '-r600');
+print(fig2, ['figs' filesep 'Figure5_deformMesh'], '-dsvg', '-r600');
         

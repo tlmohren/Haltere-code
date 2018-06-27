@@ -204,18 +204,18 @@ end
 
 
 
+% % set(gca, 'LooseInset', get(gca(), 'TightInset')); % remove whitespace around figure
 % set(gca, 'LooseInset', get(gca(), 'TightInset')); % remove whitespace around figure
-set(gca, 'LooseInset', get(gca(), 'TightInset')); % remove whitespace around figure
-set(fig4,'InvertHardcopy','on');
-set(fig4,'PaperUnits', 'inches');
-papersize = get(fig4, 'PaperSize');
-left = (papersize(1)- width)/2;
-bottom = (papersize(2)- height)/2;
-stupid_ratio = 15/16;
-myfiguresize = [left, bottom, width*stupid_ratio, height*stupid_ratio];
-set(fig4, 'PaperPosition', myfiguresize);
-print(fig4, ['figs' filesep 'Figure4_spikeFire'], '-dsvg', '-r600');
-% myfiguresize = [left, bottom, width, height];
+% set(fig4,'InvertHardcopy','on');
+% set(fig4,'PaperUnits', 'inches');
+% papersize = get(fig4, 'PaperSize');
+% left = (papersize(1)- width)/2;
+% bottom = (papersize(2)- height)/2;
+% stupid_ratio = 15/16;
+% myfiguresize = [left, bottom, width*stupid_ratio, height*stupid_ratio];
+% set(fig4, 'PaperPosition', myfiguresize);
+% print(fig4, ['figs' filesep 'Figure4_spikeFire'], '-dsvg', '-r600');
+% % myfiguresize = [left, bottom, width, height];
 % set(fig4, 'PaperPosition', myfiguresize);
 % print(fig4, ['figs' filesep 'Figure4_spikeFire' ], '-dpng', '-r600');
 
@@ -234,49 +234,49 @@ print(fig4, ['figs' filesep 'Figure4_spikeFire'], '-dsvg', '-r600');
 % myfiguresize = [left, bottom, width*stupid_ratio, height*stupid_ratio];
 % set(fig1, 'PaperPosition', myfiguresize);
 % print(fig1, ['figs' filesep 'Figure4_spikeCircle'], '-dsvg', '-r600');
+% 
 
 
+set(gca, 'LooseInset', get(gca(), 'TightInset')); % remove whitespace around figure
+set(fig2,'InvertHardcopy','on');
+set(fig2,'PaperUnits', 'inches');
+papersize = get(fig2, 'PaperSize');
+left = (papersize(1)- width)/2;
+bottom = (papersize(2)- height)/2;
+stupid_ratio = 15/16;
+myfiguresize = [left, bottom, width*stupid_ratio, height*stupid_ratio];
+set(fig2, 'PaperPosition', myfiguresize);
+print(fig2, ['figs' filesep 'Figure4_spikeStrain'], '-dsvg');
+myfiguresize = [left, bottom, width, height];
+set(fig2, 'PaperPosition', myfiguresize);
+print(fig2, ['figs' filesep 'Figure4_spikeStrain' ], '-dpng', '-r600');
 
-% set(gca, 'LooseInset', get(gca(), 'TightInset')); % remove whitespace around figure
-% set(fig2,'InvertHardcopy','on');
-% set(fig2,'PaperUnits', 'inches');
-% papersize = get(fig2, 'PaperSize');
-% left = (papersize(1)- width)/2;
-% bottom = (papersize(2)- height)/2;
-% stupid_ratio = 15/16;
-% myfiguresize = [left, bottom, width*stupid_ratio, height*stupid_ratio];
-% set(fig2, 'PaperPosition', myfiguresize);
-% print(fig2, ['figs' filesep 'Figure4_spikeStrain'], '-dsvg');
-% myfiguresize = [left, bottom, width, height];
-% set(fig2, 'PaperPosition', myfiguresize);
-% print(fig2, ['figs' filesep 'Figure4_spikeStrain' ], '-dpng', '-r600');
-% 
-% 
-% set(gca, 'LooseInset', get(gca(), 'TightInset')); % remove whitespace around figure
-% set(fig3,'InvertHardcopy','on');
-% set(fig3,'PaperUnits', 'inches');
-% papersize = get(fig3, 'PaperSize');
-% left = (papersize(1)- width)/2;
-% bottom = (papersize(2)- height)/2;
-% myfiguresize = [left, bottom, width, height];
-% set(fig3, 'PaperPosition', myfiguresize);
-% print(fig3, ['figs' filesep 'Figure4_spikeEncoder' ], '-dpng', '-r600');
-% stupid_ratio = 15/16;
-% myfiguresize = [left, bottom, width*stupid_ratio, height*stupid_ratio];
-% set(fig3, 'PaperPosition', myfiguresize);
-% print(fig3, ['figs' filesep 'Figure4_spikeEncoder'], '-dsvg', '-r600');
-% 
-% 
-% set(gca, 'LooseInset', get(gca(), 'TightInset')); % remove whitespace around figure
-% set(fig4,'InvertHardcopy','on');
-% set(fig4,'PaperUnits', 'inches');
-% papersize = get(fig4, 'PaperSize');
-% left = (papersize(1)- width)/2;
-% bottom = (papersize(2)- height)/2;
-% myfiguresize = [left, bottom, width, height];
-% set(fig4, 'PaperPosition', myfiguresize);
-% print(fig4, ['figs' filesep 'Figure4_spikeFire' ], '-dpng', '-r600');
-% stupid_ratio = 15/16;
-% myfiguresize = [left, bottom, width*stupid_ratio, height*stupid_ratio];
-% set(fig4, 'PaperPosition', myfiguresize);
-% print(fig4, ['figs' filesep 'Figure4_spikeFire'], '-dsvg');
+
+set(gca, 'LooseInset', get(gca(), 'TightInset')); % remove whitespace around figure
+set(fig3,'InvertHardcopy','on');
+set(fig3,'PaperUnits', 'inches');
+papersize = get(fig3, 'PaperSize');
+left = (papersize(1)- width)/2;
+bottom = (papersize(2)- height)/2;
+myfiguresize = [left, bottom, width, height];
+set(fig3, 'PaperPosition', myfiguresize);
+print(fig3, ['figs' filesep 'Figure4_spikeEncoder' ], '-dpng', '-r600');
+stupid_ratio = 15/16;
+myfiguresize = [left, bottom, width*stupid_ratio, height*stupid_ratio];
+set(fig3, 'PaperPosition', myfiguresize);
+print(fig3, ['figs' filesep 'Figure4_spikeEncoder'], '-dsvg', '-r600');
+
+
+set(gca, 'LooseInset', get(gca(), 'TightInset')); % remove whitespace around figure
+set(fig4,'InvertHardcopy','on');
+set(fig4,'PaperUnits', 'inches');
+papersize = get(fig4, 'PaperSize');
+left = (papersize(1)- width)/2;
+bottom = (papersize(2)- height)/2;
+myfiguresize = [left, bottom, width, height];
+set(fig4, 'PaperPosition', myfiguresize);
+print(fig4, ['figs' filesep 'Figure4_spikeFire' ], '-dpng', '-r600');
+stupid_ratio = 15/16;
+myfiguresize = [left, bottom, width*stupid_ratio, height*stupid_ratio];
+set(fig4, 'PaperPosition', myfiguresize);
+print(fig4, ['figs' filesep 'Figure4_spikeFire'], '-dsvg');

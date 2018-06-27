@@ -77,7 +77,12 @@ fig1 = figure();
     height = 3;    % Height in inches
     set(fig1, 'Position', [fig1.Position(1:2) width*100, height*100]); %<- Set size
 
+t = 0:0.001:0.35;
 deformLabels = {'$\Delta \phi$','$\Delta \theta$','$\Delta \gamma$'};
+% axOpts = {'XGrid','On','XLim',[0,0.15],'XTick',[0:0.05:0.15]}; 
+% axOpts = {'XGrid','On','XLim',[0,0.2],'XTick',[0:0.05:0.2]}; 
+% axOpts3 = {'XGrid','On','XLim',[0,0.2],'XTick',[0:0.05:0.2]}; 
+
 
 lineCols = linspecer(4);
 lineOpts(1).st = {'LineStyle','-',...
@@ -91,34 +96,35 @@ lineOpts(4).st = {'LineStyle','-',...
         
 legend_entries = {'sphere','sphere 10','ellipsoid hor','ellipsoid hor 10', 'ellipsoid ver', 'ellipsoid ver 10'};
 
-% t_plot = 1
 for j = 1:length(FEA)/2
+    j
     subplot(3,1,1); hold on 
-        p1 = plot( t_plot, FEA(j*2-1).yAngle(It) );
-        p2 = plot( t_plot, FEA(j*2).yAngle(It) );
+        p1 = plot(t,FEA(j*2-1).yAngle )
+        p2 = plot(t,FEA(j*2).yAngle )
         ylabel( deformLabels{1} );
         ax = gca();
-        set(ax,axOptsNoT{:})
-%         legend(legend_entries)
+        set(ax,axOpts{:})
+        legend(legend_entries)
+        
+        
         set(p1, lineOpts(1).st{:})
         set(p2, lineOpts(j+1).st{:})
-        
     subplot(312); hold on 
-        p1 = plot( t_plot, FEA(j*2-1).zAngle(It) );
-        p2 = plot( t_plot, FEA(j*2).zAngle(It) );
+        p1 = plot(t,FEA(j*2-1).zAngle)
+        p2 = plot(t,FEA(j*2).zAngle )
         ylabel( deformLabels{2} );
         ax = gca();
-        set(ax,axOptsNoT{:})
+        set(ax,axOpts{:})
+    
         set(p1, lineOpts(1).st{:})
         set(p2, lineOpts(j+1).st{:})
-        
     subplot(313); hold on 
-        p1 = plot( t_plot, FEA(j*2-1).twistAngle(It) );
-        p2 = plot( t_plot, FEA(j*2).twistAngle(It) )  ;
+        p1 = plot(t,FEA(j*2-1).twistAngle)
+         p2 =  plot(t,FEA(j*2).twistAngle  )
         
         xlabel('Time (s)'); ylabel( deformLabels{3} );
         ax = gca();
-        set(ax,axOpts{:})
+        set(ax,axOpts3{:})
         set(p1, lineOpts(1).st{:})
         set(p2, lineOpts(j+1).st{:})
 end
@@ -294,6 +300,8 @@ subplot(312); hold on
             zOMdiff+ totDiff(Imax ,3)*1.1*OOP_mult,...
             C);
         set(s3,surfParamForeground{:})
+
+
         shading faceted
         axis tight;  axis off; axis equal
         xlabel('x');ylabel('y');zlabel('z')
@@ -317,6 +325,16 @@ end
 
 for j = 1:size(Xb,1)
     angleTemp = angles*j/size(Xb,1);
+%     eul_1 = [ 1       0                     0;...
+%                 0,  cos( angleTemp(1) ),  - sin(  angleTemp(1) )  ; ...
+%                0   sin(  angleTemp(1) ) cos(  angleTemp(1) )  ]^-1;
+%     eul_2 = [cos(  angleTemp(2))      0       sin( angleTemp(2)) ; ...
+%                 0              1       0 ;...
+%                 -sin( angleTemp(2))    0        cos(  angleTemp(2))]^-1;
+%     eul_3 = [cos(  angleTemp(3))   sin(  angleTemp(3))    0 ; ...
+%                  -sin(  angleTemp(3)) cos(  angleTemp(3))     0 ;...
+%                  0          0               1]^-1;
+         
     eul_1 = euler_angle('X',angleTemp(1))^-1;
     eul_2 = euler_angle('Y',angleTemp(2))^-1;
     eul_3 = euler_angle('Z',angleTemp(3))^-1;
@@ -354,6 +372,9 @@ subplot(313); hold on
         axis tight;  axis off; axis equal
         xlabel('x');ylabel('y');zlabel('z')
         view(40,40)
+        
+
+        
         
 %% Setting paper size for saving 
 
