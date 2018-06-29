@@ -36,13 +36,7 @@ else
     load(['data' filesep loadName],'FEA')
 end
 
-
-% 
-% 
-% 
-% 
 %% deformation in angles 
-
 fig1 = figure();
     width = 3;     % Width in inches,   find column width in paper 
     height = 3;    % Height in inches
