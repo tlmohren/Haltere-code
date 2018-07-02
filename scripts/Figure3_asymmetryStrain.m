@@ -7,7 +7,7 @@ run('config_file.m')
 loadName = 'figure3_strainData';
 saveName = 'figure3_strainData';
 
-renew_data_load = false
+renew_data_load = true
 if renew_data_load
     FEA(1).name = 'Haltere_CraneFly_Sphere_Om0';
     FEA(2).name = 'Haltere_CraneFly_Sphere_Om10';
@@ -15,6 +15,8 @@ if renew_data_load
     FEA(4).name = 'Haltere_CraneFly_ellipsoidHorOffset_Om10';
     FEA(5).name = 'Haltere_CraneFly_ellipsoidVerOffset_Om0';
     FEA(6).name = 'Haltere_CraneFly_ellipsoidVerOffset_Om10';   
+    FEA(7).name = 'Haltere_CraneFly_sphereVerOffset_Om0';
+    FEA(8).name = 'Haltere_CraneFly_sphereVerOffset_Om10';   
     for j =  1:length(FEA)
         tic
         [FEA(j).xyz, FEA(j).strain, ~] = loadCSV( ['data' filesep  FEA(j).name], { 'eXX' });        toc 
@@ -36,97 +38,41 @@ else
     load(['data' filesep loadName],'FEA')
 end
 
-
-% 
-% 
-% 
-% 
 %% deformation in angles 
-
 fig1 = figure();
-    width = 3;     % Width in inches,   find column width in paper 
-    height = 3;    % Height in inches
-    set(fig1, 'Position', [fig1.Position(1:2) width*100, height*100]); %<- Set size
+    width = 2;     % Width in inches,   find column width in paper 
+    height = 2;    % Height in inches
+    set(fig1, 'Position', [fig1.Position(1:2)-[width*100,0] width*100, height*100]); %<- Set size
 
-t = 0:0.001:0.35;
+len = 101;
+start = 35;
+It = start:(start+len-1);
+t_plot = (0:len-1)*0.001;
 
+strainLabel = {'$\epsilon$'};
+axOptsStrainTop = {'XGrid','On','XLim',[0,t_plot(end)],'XTick',[0:0.05:t_plot(end)],'XTickLabel',{'','',''} ,'YLim',[-1,1]*2e-3,'YTick',[-1,0,1]*2e-3}; 
+axOptsStrainSide = {'XGrid','On','XLim',[0,t_plot(end)],'XTick',[0:0.05:t_plot(end)] ,'YLim',[-1,1]*1.5e-4}; 
+cols = linspecer(4); 
 
-labels = {'Top and bottom strain','left and right strain'};
-axOpts1 = {'XGrid','On','XLim',[0,0.15],'XTick',[0:0.05:0.2]}; 
-axOpts2 = {'XGrid','On','XLim',[0,0.15],'XTick',[0:0.05:0.2]}; 
-axOpts3 = {'XGrid','On','XLim',[0,0.15],'XTick',[0:0.05:0.2]}; 
-
-lineSpec = {'o','-','+','-','x','-'};
-
-legend_entries = {'sphere0 top','sphere0 bottom',...
-                'sphere10 top','sphere10 bottom',...
-                'ellipsoidHorOffset0 top','ellipsoidHorOffset0 bottom',...
-                'ellipsoidHorOffset10 top','ellipsoidHorOffset10 bottom',...
-                'ellipsoidVerOffset0 top','ellipsoidVerOffset0 bottom',...
-                'ellipsoidVerOffset10 top','ellipsoidVerOffset10 bottom',...
-                };
-
-
-for j = 1:length(FEA)/2
+for j = [3]
     subplot(211); hold on 
-        plot(t(It), FEA(j*2-1).strain( FEA(j*2).topInds, (It)) , lineSpec{j*2-1})
-        plot(t(It), FEA(j*2).strain( FEA(j*2).topInds, (It)) , lineSpec{j*2})
-        ylabel( labels{2} );
+        p1 = plot(t_plot, FEA(j).strain( FEA(j).topInds(1), It) );
+        p2 = plot(t_plot, FEA(j).strain( FEA(j).topInds(2), It) );
+        ylabel( strainLabel,'Rotation',0 );
         ax = gca();
-        set(ax,axOpts2{:})
+        set(ax,axOptsStrainTop{:})
     subplot(212); hold on 
-        plot(t(It), FEA(j*2-1).strain( FEA(j*2).sideInds, (It)) , lineSpec{j*2-1})
-        plot(t(It), FEA(j*2).strain( FEA(j*2).sideInds, (It)) , lineSpec{j*2})
-        ylabel( labels{2} );
+        p3 = plot(t_plot, FEA(j).strain( FEA(j).sideInds(1), It) );
+        p4 = plot(t_plot, FEA(j).strain( FEA(j).sideInds(2), It) );
+        xlabel('Time (s)')
+        ylabel( strainLabel,'Rotation',0);
         ax = gca();
-        set(ax,axOpts2{:})
+        set(ax,axOptsStrainSide{:})
 end
-legend(legend_entries)
-        
-        
-%% deformation in angles 
-
-fig2 = figure();
-    width = 3;     % Width in inches,   find column width in paper 
-    height = 3;    % Height in inches
-    set(fig2, 'Position', [fig2.Position(1:2) width*100, height*100]); %<- Set size
-
-t = 0:0.001:0.35;
-
-
-labels = {'Top and bottom strain','left and right strain'};
-axOpts1 = {'XGrid','On','XLim',[0,0.15],'XTick',[0:0.05:0.2]}; 
-axOpts2 = {'XGrid','On','XLim',[0,0.15],'XTick',[0:0.05:0.2]}; 
-axOpts3 = {'XGrid','On','XLim',[0,0.15],'XTick',[0:0.05:0.2]}; 
-
-lineSpec = {'o','-','+','-','x','-'};
-
-legend_entries = {'sphere0 top',...
-                'sphere10 top',...
-                'ellipsoidHorOffset0 bottom',...
-                'ellipsoidHorOffset10 bottom',...
-               'ellipsoidVerOffset0 bottom',...
-                'ellipsoidVerOffset10 bottom',...
-                };
-It = 1:160;
-
-
-for j = 1:length(FEA)/2
-    subplot(211); hold on 
-        plot(t(It), -FEA(j*2-1).strain( FEA(j*2).topInds(1), (It) ) +FEA(j*2-1).strain( FEA(j*2).topInds(2) , (It)) , lineSpec{j*2-1})
-        plot(t(It), -FEA(j*2).strain( FEA(j*2).topInds(1), (It))+ FEA(j*2).strain( FEA(j*2).topInds(2), (It)) , lineSpec{j*2})
-        ylabel( labels{2} );
-        ax = gca();
-        set(ax,axOpts2{:})
-    subplot(212); hold on 
-        plot(t(It), FEA(j*2-1).strain( FEA(j*2).sideInds(1), (It)) -  FEA(j*2-1).strain( FEA(j*2).sideInds(2), (It)) , lineSpec{j*2-1})
-        plot(t(It), FEA(j*2).strain( FEA(j*2).sideInds(1), (It))- FEA(j*2).strain( FEA(j*2).sideInds(2), (It))  , lineSpec{j*2})
-        ylabel( labels{2} );
-        ax = gca();
-        set(ax,axOpts2{:})
-end
-legend(legend_entries)
-%% Setting paper size for saving 
+set(p1,'Color',cols(1,:))
+set(p2,'Color',cols(2,:))
+set(p3,'Color',cols(3,:))
+set(p4,'Color',cols(4,:))
 
 set(gca, 'LooseInset', get(gca(), 'TightInset')); % remove whitespace around figure
 set(fig1,'InvertHardcopy','on');
@@ -136,9 +82,127 @@ left = (papersize(1)- width)/2;
 bottom = (papersize(2)- height)/2;
 myfiguresize = [left, bottom, width, height];
 set(fig1, 'PaperPosition', myfiguresize);
-print(fig1, ['figs' filesep 'Figure3_strainOffsetPlot' ], '-dpng', '-r600');
+print(fig1, ['figs' filesep 'Figure3_strainOffsetHorOM0' ], '-dpng', '-r600');
 stupid_ratio = 15/16;
 myfiguresize = [left, bottom, width*stupid_ratio, height*stupid_ratio];
 set(fig1, 'PaperPosition', myfiguresize);
-print(fig1, ['figs' filesep 'Figure3_strainOffsetPlot'], '-dsvg', '-r600');
-% 
+print(fig1, ['figs' filesep 'Figure3_strainOffsetHorOM0'], '-dsvg', '-r600');
+
+%%
+fig2 = figure();
+    width = 2;     % Width in inches,   find column width in paper 
+    height = 2;    % Height in inches
+    set(fig2, 'Position', [fig2.Position(1:2) width*100, height*100]); %<- Set size
+for j = [4]
+    subplot(211); hold on 
+        p1 = plot(t_plot, FEA(j).strain( FEA(j).topInds(1), It) );
+        p2 = plot(t_plot, FEA(j).strain( FEA(j).topInds(2), It) );
+        ylabel( strainLabel,'Rotation',0 );
+        ax = gca();
+        set(ax,axOptsStrainTop{:})
+    subplot(212); hold on 
+        p3 = plot(t_plot, FEA(j).strain( FEA(j).sideInds(1), It) );
+        p4 = plot(t_plot, FEA(j).strain( FEA(j).sideInds(2), It) );
+        xlabel('Time (s)')
+        ylabel( strainLabel,'Rotation',0);
+        ax = gca();
+        set(ax,axOptsStrainSide{:})
+end
+set(p1,'Color',cols(1,:))
+set(p2,'Color',cols(2,:))
+set(p3,'Color',cols(3,:))
+set(p4,'Color',cols(4,:))
+
+set(gca, 'LooseInset', get(gca(), 'TightInset')); % remove whitespace around figure
+set(fig2,'InvertHardcopy','on');
+set(fig2,'PaperUnits', 'inches');
+papersize = get(fig2, 'PaperSize');
+left = (papersize(1)- width)/2;
+bottom = (papersize(2)- height)/2;
+myfiguresize = [left, bottom, width, height];
+set(fig2, 'PaperPosition', myfiguresize);
+print(fig2, ['figs' filesep 'Figure3_strainOffsetHorOM10' ], '-dpng', '-r600');
+stupid_ratio = 15/16;
+myfiguresize = [left, bottom, width*stupid_ratio, height*stupid_ratio];
+set(fig2, 'PaperPosition', myfiguresize);
+print(fig2, ['figs' filesep 'Figure3_strainOffsetHorOM10'], '-dsvg', '-r600');
+
+%% 
+fig3 = figure();
+    width = 2;     % Width in inches,   find column width in paper 
+    height = 2;    % Height in inches
+    set(fig3, 'Position', [fig3.Position(1:2)-[width,height*1.5]*100 width*100, height*100]); %<- Set size
+
+for j = [5,7]
+    subplot(211); hold on 
+        p1 = plot(t_plot, FEA(j).strain( FEA(j).topInds(1), It) );
+        p2 = plot(t_plot, FEA(j).strain( FEA(j).topInds(2), It) );
+        ylabel( strainLabel,'Rotation',0 );
+        ax = gca();
+        set(ax,axOptsStrainTop{:})
+    subplot(212); hold on 
+        p3 = plot(t_plot, FEA(j).strain( FEA(j).sideInds(1), It) );
+        p4 = plot(t_plot, FEA(j).strain( FEA(j).sideInds(2), It) );
+        xlabel('Time (s)')
+        ylabel( strainLabel,'Rotation',0);
+        ax = gca();
+        set(ax,axOptsStrainSide{:})
+end
+set(p1,'Color',cols(1,:))
+set(p2,'Color',cols(2,:))
+set(p3,'Color',cols(3,:))
+set(p4,'Color',cols(4,:))
+
+set(gca, 'LooseInset', get(gca(), 'TightInset')); % remove whitespace around figure
+set(fig3,'InvertHardcopy','on');
+set(fig3,'PaperUnits', 'inches');
+papersize = get(fig3, 'PaperSize');
+left = (papersize(1)- width)/2;
+bottom = (papersize(2)- height)/2;
+myfiguresize = [left, bottom, width, height];
+set(fig3, 'PaperPosition', myfiguresize);
+print(fig3, ['figs' filesep 'Figure3_strainOffsetVerOM0' ], '-dpng', '-r600');
+stupid_ratio = 15/16;
+myfiguresize = [left, bottom, width*stupid_ratio, height*stupid_ratio];
+set(fig3, 'PaperPosition', myfiguresize);
+print(fig3, ['figs' filesep 'Figure3_strainOffsetVerOM0'], '-dsvg', '-r600');
+
+%%
+fig4 = figure();
+    width = 2;     % Width in inches,   find column width in paper 
+    height = 2;    % Height in inches
+    set(fig4, 'Position', [fig4.Position(1:2)-[0,height*1.5]*100 width*100, height*100]); %<- Set size
+
+for j = [6,8]
+    subplot(211); hold on 
+        p1 = plot(t_plot, FEA(j).strain( FEA(j).topInds(1), It) );
+        p2 = plot(t_plot, FEA(j).strain( FEA(j).topInds(2), It) );
+        ylabel( strainLabel,'Rotation',0 );
+        ax = gca();
+        set(ax,axOptsStrainTop{:})
+    subplot(212); hold on 
+        p3 = plot(t_plot, FEA(j).strain( FEA(j).sideInds(1), It) );
+        p4 = plot(t_plot, FEA(j).strain( FEA(j).sideInds(2), It) );
+        xlabel('Time (s)')
+        ylabel( strainLabel,'Rotation',0);
+        ax = gca();
+        set(ax,axOptsStrainSide{:})
+end
+set(p1,'Color',cols(1,:))
+set(p2,'Color',cols(2,:))
+set(p3,'Color',cols(3,:))
+set(p4,'Color',cols(4,:))
+
+set(gca, 'LooseInset', get(gca(), 'TightInset')); % remove whitespace around figure
+set(fig4,'InvertHardcopy','on');
+set(fig4,'PaperUnits', 'inches');
+papersize = get(fig4, 'PaperSize');
+left = (papersize(1)- width)/2;
+bottom = (papersize(2)- height)/2;
+myfiguresize = [left, bottom, width, height];
+set(fig4, 'PaperPosition', myfiguresize);
+print(fig4, ['figs' filesep 'Figure3_strainOffsetVerOM10' ], '-dpng', '-r600');
+stupid_ratio = 15/16;
+myfiguresize = [left, bottom, width*stupid_ratio, height*stupid_ratio];
+set(fig4, 'PaperPosition', myfiguresize);
+print(fig4, ['figs' filesep 'Figure3_strainOffsetVerOM10'], '-dsvg', '-r600');
