@@ -7,7 +7,7 @@ run('config_file.m')
 loadName = 'figure5_deform';
 saveName = 'figure5_deform';
 
-renew_data_load = true
+renew_data_load = false
 if renew_data_load
     FEA(1).name = 'Haltere_CraneFly_Sphere_Om0';
     FEA(2).name = 'Haltere_CraneFly_Sphere_Om10';
@@ -73,43 +73,44 @@ end
 
 %% deformation in angles 
 
+
 fig1 = figure();
     width = 2;     % Width in inches,   find column width in paper 
     height = 3;    % Height in inches
     set(fig1, 'Position', [fig1.Position(1:2) width*100, height*100]); %<- Set size
 
-t = 0:0.001:0.35;
-labels = {'$\Delta \phi$','$\Delta \theta$','$\Delta \gamma$'};
-axOpts1 = {'XGrid','On','XLim',[0,0.2],'XTick',[0:0.05:0.2]}; 
-axOpts2 = {'XGrid','On','XLim',[0,0.2],'XTick',[0:0.05:0.2]}; 
-axOpts3 = {'XGrid','On','XLim',[0,0.2],'XTick',[0:0.05:0.2]}; 
+deformLabels = {'$\Delta \phi$','$\Delta \theta$','$\Delta \gamma$'};
+        
+axOpts_dphi= {'XGrid','On','XLim',[0,t_plot(end)],'XTick',[0:0.05:0.15],'XTickLabel',{'','','',''} ,...
+               'YLim',[-0.02,0.02]}; 
+axOpts_dtheta= {'XGrid','On','XLim',[0,t_plot(end)],'XTick',[0:0.05:0.15],'XTickLabel',{'','','',''} ,...
+               'YLim',[-1,1]*1e-3}; 
+axOpts_dgamma= {'XGrid','On','XLim',[0,t_plot(end)],'XTick',[0:0.05:0.15] ,...
+               'YLim',[-1,1]*5e-5}; 
+           
+legend_entries = {'sphere','ellipsoid hor','ellipsoid ver'};
 
-lineSpec = {':','-','o','-','+','-'};
-
-legend_entries = {'sphere','sphere 10','ellipsoid hor','ellipsoid hor 10', 'ellipsoid ver', 'ellipsoid ver 10'};
-
-for j = 1:length(FEA)/2
-    j
+for j = [1,5]
     subplot(3,1,1); hold on 
-        plot(t,FEA(j*2-1).yAngle , lineSpec{j*2-1})
-        plot(t,FEA(j*2).yAngle , lineSpec{j*2})
-        ylabel( labels{1} );
+        p1 = plot( t_plot, FEA(j).yAngle(It) );
+        ylabel( deformLabels{1} );
         ax = gca();
-        set(ax,axOpts1{:})
-        legend(legend_entries)
+        set(ax,axOpts_dphi{:})
+        
     subplot(312); hold on 
-        plot(t,FEA(j*2-1).zAngle,  lineSpec{j*2-1} )
-        plot(t,FEA(j*2).zAngle , lineSpec{j*2} )
-        ylabel( labels{2} );
+        p1 = plot( t_plot, FEA(j).zAngle(It) );
+        ylabel( deformLabels{2} );
         ax = gca();
-        set(ax,axOpts2{:})
-    subplot(313); hold on 
-        plot(t,FEA(j*2-1).twistAngle,  lineSpec{j*2-1})
-        plot(t,FEA(j*2).twistAngle , lineSpec{j*2})
-        xlabel('Time (s)'); ylabel( labels{3} );
-        ax = gca();
-        set(ax,axOpts3{:})
+        set(ax,axOpts_dtheta{:})
+%         
+%     subplot(313); hold on 
+%         p1 = plot( t_plot, FEA(j).twistAngle(It) );
+%         xlabel('Time (s)'); ylabel( deformLabels{3} );
+%         ax = gca();
+%         set(ax,axOpts_dgamma{:})
 end
+    subplot(311)
+        legend(legend_entries{:})
 
 %% Setting paper size for saving 
 

@@ -7,36 +7,50 @@ run('config_file.m')
 loadName = 'figure5_strainData';
 saveName = 'figure5_strainData';
 
+% renew_data_load = false 
 renew_data_load = true
 if renew_data_load
-    FEA(1).name = 'Haltere_CraneFly_Sphere_Om0';
-    FEA(2).name = 'Haltere_CraneFly_Sphere_Om10';
-%     FEA(3).name = 'Haltere_CraneFly_ellipsoidHor_Om0';
-%     FEA(4).name = 'Haltere_CraneFly_ellipsoidHor_Om10';
-    FEA(3).name = 'Haltere_CraneFly_ellipsoidVer_Om0';
-    FEA(4).name = 'Haltere_CraneFly_ellipsoidVer_Om10';   
-    FEA(5).name = 'Haltere_CraneFly_ellipsoidVerCrossStalk_Om10';
+    FEA(1).name = 'Haltere_CraneFly_ellipsoidVerCrossStalk_Om10';
+    FEA(2).name = 'Haltere_CraneFly_ellipsoidVerCrossStalk_Om10';
     for j =  1:length(FEA)
         tic
         [FEA(j).xyz, FEA(j).strain, ~] = loadCSV( ['data' filesep  FEA(j).name], { 'eXX' });        toc 
     end
-    % Determine Circle locations
+
+        sideL = 243.4350; 
     for j = 1:length(FEA)
         circleDistance = 300;               % distance from base to haltere 
-        circleRadius = 150;                 % radius of haltere   
+        circleRadius = sideL;                 % radius of haltere   
         mindist =  min( abs( FEA(j).xyz(:,1) - circleDistance) );
         xMatch = find(  abs(FEA(j).xyz(:,1) - circleDistance) <= (mindist+1) );
-        yMatch = find( round( abs( FEA(j).xyz(:,2) ), 7) == circleRadius );
-        zMatch = find( round( abs( FEA(j).xyz(:,3) ), 7) == circleRadius );
+        yMatch = find( round( abs( FEA(j).xyz(:,2) ), 0) == circleRadius );
+        zMatch = find( round( abs( FEA(j).xyz(:,3) ), 0) == circleRadius );
 
         FEA(j).sideInds = intersect(xMatch,yMatch);
         FEA(j).topInds = intersect(xMatch,zMatch);
     end
+        
     save(['data' filesep saveName],'FEA')
 else
     load(['data' filesep loadName],'FEA')
 end
-
+% %% 
+% 
+%     for j = 5;
+%         sideL = 243.4350; 
+% %         sideL = 243.4350; 
+%         circleDistance = 300;               % distance from base to haltere 
+%         circleRadius = 150;                 % radius of haltere   
+%         mindist =  min( abs( FEA(j).xyz(:,1) - circleDistance) );
+%         xMatch = find(  abs(FEA(j).xyz(:,1) - circleDistance) <= (mindist+1) );
+%         yMatch = find( round( abs( FEA(j).xyz(:,2) ), 7) == sideL );
+%         zMatch = find( round( abs( FEA(j).xyz(:,3) ), 7) == sideL  );
+% 
+%         FEA(j).sideInds = intersect(xMatch,yMatch);
+%         FEA(j).topInds = intersect(xMatch,zMatch);
+%     end
+    
+    
 
 % 
 % 

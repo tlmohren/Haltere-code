@@ -50,14 +50,59 @@ if renew_data_load
 else
     load(['data' filesep loadName],'FEA')
 end
+%% 
+        sideL = 243.4350; 
+    for j = 5% 1:length(FEA)
+        circleDistance = 300;               % distance from base to haltere 
+        circleRadius = 150;                 % radius of haltere   
+        mindist =  min( abs( FEA(j).xyz(:,1) - circleDistance) );
+        xMatch = find(  abs(FEA(j).xyz(:,1) - circleDistance) <= (mindist+1) );
+        
+%         outMatch = 
+%         rMatch = find( sqrt(FEA(j).xyz(:,2).^2 + FEA(j).xyz(:,3).^2)  >= circleRadius*0.99 );
+
+%         yMatch = find( round( abs( FEA(j).xyz(:,2) ), 7) == circleRadius );
+%         zMatch = find( round( abs( FEA(j).xyz(:,3) ), 7) == circleRadius );
+
+        yMatch = find( round( abs( FEA(j).xyz(:,2) ), 2) == sideL );
+        zMatch = find( round( abs( FEA(j).xyz(:,3) ), 3) == sideL  );
+
+        
+        FEA(j).circleIndsUnsorted = intersect( xMatch,yMatch); 
+        
+        angle = atan2( FEA(j).xyz( FEA(j).circleIndsUnsorted,3), ...
+            FEA(j).xyz( FEA(j).circleIndsUnsorted,2) );
+        angleDeg = rad2deg(angle);
+        angleDeg(angleDeg<0) = angleDeg(angleDeg<0)+360;
+        [V,I_sort] = sort(angleDeg,'ascend');
+% 
+        FEA(j).circleInds= FEA(j).circleIndsUnsorted(I_sort);
+
+        FEA(j).sideInds = intersect(xMatch,yMatch);
+        FEA(j).topInds = intersect(xMatch,zMatch);
+    end
 
 
-
-
-
+% 
+%     for j = 5;
+%         sideL = 243.4350; 
+% %         sideL = 243.4350; 
+%         circleDistance = 300;               % distance from base to haltere 
+%         circleRadius = 150;                 % radius of haltere   
+%         mindist =  min( abs( FEA(j).xyz(:,1) - circleDistance) );
+%         xMatch = find(  abs(FEA(j).xyz(:,1) - circleDistance) <= (mindist+1) );
+%         yMatch = find( round( abs( FEA(j).xyz(:,2) ), 7) == sideL );
+%         zMatch = find( round( abs( FEA(j).xyz(:,3) ), 7) == sideL  );
+% 
+%         FEA(j).sideInds = intersect(xMatch,yMatch);
+%         FEA(j).topInds = intersect(xMatch,zMatch);
+%     end
 
 
 %% 
+
+
+        sideL = 243.4350; 
 
 FEA(5).xrtheta(:,1) = FEA(5).xyz(:,1);
 FEA(5).xrtheta(:,2) = sqrt( FEA(5).xyz(:,2).^2  +  FEA(5).xyz(:,3).^2 );
@@ -65,15 +110,24 @@ FEA(5).xrtheta(:,3) = atan2( FEA(5).xyz(:,3), FEA(5).xyz(:,2) ) +pi ;
 
 for k=1:length(xDes)
     dx = abs(FEA(5).xrtheta(:,1)-xDes(k) );
-    dr = abs(FEA(5).xrtheta(:,2)-150 );
     for l = 1:length(theta)
-        da = abs(FEA(5).xrtheta(:,3) - theta(l) );
-        J = dx.^2 + dr.^2+ (da*150.^2);
-        [V,I] = min(J);
-        Xfront(k,l) = FEA(5).xyz(I,1) ; 
-        Yfront(k,l) = FEA(5).xyz(I,2) ; 
-        Zfront(k,l) = FEA(5).xyz(I,3) ; 
-
+        if any( [1/4,3/4,5/4,7/4]*pi == theta(l))
+            da = abs(FEA(5).xrtheta(:,3) - theta(l) );
+            J = dx.^2 + dr.^2+ (da*250.^2);
+            [V,I] = min(J);
+            Xfront(k,l) = FEA(5).xyz(I,1) ; 
+            Yfront(k,l) = FEA(5).xyz(I,2) ; 
+            Zfront(k,l) = FEA(5).xyz(I,3) ; 
+        else
+            display('happened')
+            dr = abs(FEA(5).xrtheta(:,2)- sqrt(2)*sideL*0.1 );
+            da = abs(FEA(5).xrtheta(:,3) - theta(l) );
+            J = dx.^2 + dr.^2+ (da*250.^2);
+            [V,I] = min(J);
+            Xfront(k,l) = FEA(5).xyz(I,1) ; 
+            Yfront(k,l) = FEA(5).xyz(I,2) ; 
+            Zfront(k,l) = FEA(5).xyz(I,3) ; 
+        end
     end
 end
 
@@ -81,15 +135,28 @@ end
 xDes = [0:150:300];
 for k=1:length(xDes)
     dx = abs(FEA(5).xrtheta(:,1)-xDes(k) );
-    dr = abs(FEA(5).xrtheta(:,2)-150 );
     for l = 1:length(theta)
-        da = abs(FEA(5).xrtheta(:,3) - theta(l) );
-        J = dx.^2 + dr.^2+ (da*150.^2);
-        [V,I] = min(J);
-        Xback(k,l) = FEA(5).xyz(I,1) ; 
-        Yback(k,l) = FEA(5).xyz(I,2) ; 
-        Zback(k,l) = FEA(5).xyz(I,3) ; 
-
+        if any( [1/4,3/4,5/4,7/4]*pi == theta(l))
+            dr = abs(FEA(5).xrtheta(:,2)- sqrt(2)*sideL );
+            da = abs(FEA(5).xrtheta(:,3) - theta(l) );
+            J = dx.^2 + dr.^2+ (da*250.^2);
+            [V,I] = min(J);
+            Xfront(k,l) = FEA(5).xyz(I,1) ; 
+            Yfront(k,l) = FEA(5).xyz(I,2) ; 
+            Zfront(k,l) = FEA(5).xyz(I,3) ; 
+%             Xfront(k,l) = 1 ; 
+%             Yfront(k,l) = 1 ; 
+%             Zfront(k,l) = 1 ; 
+        else
+            display('happened')
+            dr = abs(FEA(5).xrtheta(:,2)- sqrt(2)*sideL*0.1 );
+            da = abs(FEA(5).xrtheta(:,3) - theta(l) );
+            J = dx.^2 + dr.^2+ (da*100.^2);
+            [V,I] = min(J);
+            Xfront(k,l) = FEA(5).xyz(I,1) ; 
+            Yfront(k,l) = FEA(5).xyz(I,2) ; 
+            Zfront(k,l) = FEA(5).xyz(I,3) ; 
+        end
     end
 end
    
@@ -118,18 +185,18 @@ C = zeros(size(x));
     hold on 
 	sback = surf(Xback,Yback,Zback,Cb);
         set(sback,surfParamBackground{:})
-    splane = surf( [1,1;1,1]*300, [-1,1;-1,1]*300,[-1,-1;1,1]*300,[1,1;1,1]*0)
+    splane = surf( [1,1;1,1]*300, [-1,1;-1,1]*300,[-1,-1;1,1]*300,[1,1;1,1]*0);
         set(splane,surfParamPlane{:})
 	sfront = surf(Xfront,Yfront,Zfront,Cf);
         set(sfront,surfParamForeground{:})
 %     s2 = surf(Xj,Yj,Zj,Cj);
 %         set(s2,surfParamForeground{:})
-    s1 = surf(x+5e3,y,z,C);
-        set(s1,surfParamForeground{:})
-% % 
+%     s1 = surf(x+5e3,y,z,C);
+%         set(s1,surfParamForeground{:})
+% 
 
     thetTemp = linspace(0,2*pi,50);
-    r = 150; 
+    r = 250; 
     plot3( 300*ones(length(thetTemp)), sin(thetTemp)*r, cos(thetTemp)*r,'k') 
     
     
