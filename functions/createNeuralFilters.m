@@ -7,10 +7,10 @@ function [ STAFunc,NLDFunc] = createNeuralFilters( STAfreq,STAwidth,STAdelay,NLD
 
     STAt = -39:0.1:0;   
     NLDrange = -1:0.01:1;
-    figure(100);
-    subplot(211)
-        plot(STAt, STAFunc(STAt) );hold on;drawnow
-    subplot(212)
-        plot(NLDrange, NLDFunc(NLDrange) );hold on;drawnow; grid on
+%     figure(100);
+%     subplot(211)
+%         plot(STAt, STAFunc(STAt) );hold on;drawnow
+%     subplot(212)
+%         plot(NLDrange, NLDFunc(NLDrange) );hold on;drawnow; grid on
 end
 

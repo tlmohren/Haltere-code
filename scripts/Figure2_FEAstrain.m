@@ -37,13 +37,16 @@ else
 end
 
 %% deformation in angles 
+
+
+
 fig1 = figure();
     width = 2;     % Width in inches,   find column width in paper 
     height = 2;    % Height in inches
     set(fig1, 'Position', [fig1.Position(1:2)-[width*100,0] width*100, height*100]); %<- Set size
 
 strainLabel = {'$\epsilon$'};
-axOptsStrainTop = {'XGrid','On','XLim',[0,0.15],'XTick',[0:0.05:0.15],'XTickLabel',{'','','',''},'YLim',[-1,1]*2e-3,'YTick',[-1,0,1]*2e-3}; 
+axOptsStrainTop = {'XGrid','On','XLim',[0,0.15],'XTick',[0:0.05:t_plot(end)],'XTickLabel',{'','','',''},'YLim',[-1,1]*2e-3,'YTick',[-1,0,1]*2e-3}; 
 axOptsStrainSide = {'XGrid','On','XLim',[0,0.15],'XTick',[0:0.05:0.15],'YLim',[-1,1]*1e-4}; 
 
 cols = linspecer(4); 
