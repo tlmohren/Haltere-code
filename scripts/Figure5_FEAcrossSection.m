@@ -4,162 +4,124 @@ addpathFolderStructureHaltere()
 run('config_file.m')
 
 %%
-loadName = 'figure5_strainData';
-saveName = 'figure5_strainData';
+loadName = 'figure5_deform';
+saveName = 'figure5_deform';
 
 renew_data_load = false
 % renew_data_load = true
 if renew_data_load
-    FEA(1).name = 'Haltere_CraneFly_Sphere_Om0';
-    FEA(2).name = 'Haltere_CraneFly_Sphere_Om10';
-    FEA(3).name = 'Haltere_CraneFly_ellipsoidVer_Om0';
-    FEA(4).name = 'Haltere_CraneFly_ellipsoidVer_Om10';
-    FEA(5).name = 'Haltere_CraneFly_ellipsoidVerCrossStalk_Om10';
-%     FEA(6).name = 'Haltere_CraneFly_ellipsoidVerCrossStalk_Om10';   
+    FEA(1).name = 'Haltere_CraneFly_ellipsoidVerCrossStalk_Om0';
+    FEA(2).name = 'Haltere_CraneFly_ellipsoidVerCrossStalk_Om10';
     for j =  1:length(FEA)
         tic
-        [FEA(j).xyz, FEA(j).strain, ~] = loadCSV( ['data' filesep  FEA(j).name], { 'eXX' });        toc 
+        [FEA(j).xyz, FEA(j).deform, ~] = loadCSV( ['data' filesep  FEA(j).name], { 'u2','v2','w2'});
+        [~, FEA(j).angles, ~] = loadCSV( ['data' filesep  FEA(j).name], { 'flapangle','theta_angle'});
+        toc 
     end
-    % Determine Circle locations
+    
+    sideL = 243.435; 
+    circleDistance = 3000;               % distance from base to haltere 
+    er = 0.01;
     for j = 1:length(FEA)
-        circleDistance = 300;               % distance from base to haltere 
-        circleRadius = 150;                 % radius of haltere   
-        mindist =  min( abs( FEA(j).xyz(:,1) - circleDistance) );
-        xMatch = find(  abs(FEA(j).xyz(:,1) - circleDistance) <= (mindist+1) );
-        
-        
-        rMatch = find( sqrt(FEA(j).xyz(:,2).^2 + FEA(j).xyz(:,3).^2)  >= circleRadius*0.99 );
-
-        yMatch = find( round( abs( FEA(j).xyz(:,2) ), 7) == circleRadius );
-        zMatch = find( round( abs( FEA(j).xyz(:,3) ), 7) == circleRadius );
-
-        FEA(j).circleIndsUnsorted = intersect( xMatch,rMatch); 
-        
-        angle = atan2( FEA(j).xyz( FEA(j).circleIndsUnsorted,3), ...
-            FEA(j).xyz( FEA(j).circleIndsUnsorted,2) );
-        angleDeg = rad2deg(angle);
-        angleDeg(angleDeg<0) = angleDeg(angleDeg<0)+360;
-        [V,I_sort] = sort(angleDeg,'ascend');
-% 
-        FEA(j).circleInds= FEA(j).circleIndsUnsorted(I_sort);
-
+        xMatch = find(   abs(abs( FEA(j).xyz(:,1) ) - circleDistance)  <er );
+        yMatch = find(   abs(abs( FEA(j).xyz(:,2) ) - sideL) <er & ...
+                     abs( FEA(j).xyz(:,3) )   <er);
+        zMatch = find(   abs(abs( FEA(j).xyz(:,3) ) - sideL)  <er & ...
+                     abs( FEA(j).xyz(:,2) )   <er);
         FEA(j).sideInds = intersect(xMatch,yMatch);
         FEA(j).topInds = intersect(xMatch,zMatch);
+    end
+    
+    % Transpose deformation to haltere frame 
+    for j = 1:length(FEA)
+        tic
+        FEA(j).phi = FEA(j).angles(1,:,1) ;
+        FEA(j).theta = -FEA(j).angles(1,:,2) ; 
+        [ n_points,n_times, n_deform] = size( FEA(j).deform );
+        % compute actual point locations 
+        FEA(j).xyzPoints = FEA(j).deform  + ...       
+            permute( repmat( FEA(j).xyz,1,1, n_times), [1,3,2] ) ;
+        % transpose points into rigid haltere frame 
+        for k = 1:n_times
+            for l = 1:n_points
+                eul_phi = euler_angle('Y',FEA(j).phi(k))^-1;
+                eul_theta = euler_angle('Z',FEA(j).theta(k))^-1;
+                FEA(j).xyzHaltereFrame(l,k,:) = eul_phi* eul_theta*  squeeze(FEA(j).xyzPoints(l,k,:) ) ;
+            end
+        end
+    %     compute middle point j
+        FEA(j).xyzHaltereFrameMiddle = squeeze(  mean( FEA(j).xyzHaltereFrame( FEA(j).sideInds,:,:), 1)  );
+        FEA(j).dz = diff( FEA(j).xyzHaltereFrame( FEA(j).sideInds,:,3));
+        FEA(j).dy = diff( FEA(j).xyzHaltereFrame( FEA(j).sideInds,:,2));
+        FEA(j).twistAngle = atan2(FEA(j).dz, abs( FEA(j).dy) );
+        FEA(j).yAngle = atan( FEA(j).xyzHaltereFrameMiddle(:,3) ./ FEA(j).xyzHaltereFrameMiddle(:,1));
+        FEA(j).zAngle = atan( FEA(j).xyzHaltereFrameMiddle(:,2) ./ FEA(j).xyzHaltereFrameMiddle(:,1));
+        toc 
     end
     save(['data' filesep saveName],'FEA')
 else
     load(['data' filesep loadName],'FEA')
 end
+
+
 %% 
-        sideL = 243.4350; 
-    for j = 5% 1:length(FEA)
-        circleDistance = 300;               % distance from base to haltere 
-        circleRadius = 150;                 % radius of haltere   
-        mindist =  min( abs( FEA(j).xyz(:,1) - circleDistance) );
-        xMatch = find(  abs(FEA(j).xyz(:,1) - circleDistance) <= (mindist+1) );
-        
-%         outMatch = 
-%         rMatch = find( sqrt(FEA(j).xyz(:,2).^2 + FEA(j).xyz(:,3).^2)  >= circleRadius*0.99 );
 
-%         yMatch = find( round( abs( FEA(j).xyz(:,2) ), 7) == circleRadius );
-%         zMatch = find( round( abs( FEA(j).xyz(:,3) ), 7) == circleRadius );
-
-        yMatch = find( round( abs( FEA(j).xyz(:,2) ), 2) == sideL );
-        zMatch = find( round( abs( FEA(j).xyz(:,3) ), 3) == sideL  );
-
-        
-        FEA(j).circleIndsUnsorted = intersect( xMatch,yMatch); 
-        
-        angle = atan2( FEA(j).xyz( FEA(j).circleIndsUnsorted,3), ...
-            FEA(j).xyz( FEA(j).circleIndsUnsorted,2) );
-        angleDeg = rad2deg(angle);
-        angleDeg(angleDeg<0) = angleDeg(angleDeg<0)+360;
-        [V,I_sort] = sort(angleDeg,'ascend');
-% 
-        FEA(j).circleInds= FEA(j).circleIndsUnsorted(I_sort);
-
+    sideL = 243.435; 
+    circleDistance = 300;               % distance from base to haltere 
+    er = 0.01;
+    for j = 1:length(FEA)
+        xMatch = find(   abs(abs( FEA(j).xyz(:,1) ) - circleDistance)  <er );
+        yMatch = find(   abs(abs( FEA(j).xyz(:,2) ) - sideL) <er & ...
+                     abs( FEA(j).xyz(:,3) )   <er);
+        zMatch = find(   abs(abs( FEA(j).xyz(:,3) ) - sideL)  <er & ...
+                     abs( FEA(j).xyz(:,2) )   <er);
         FEA(j).sideInds = intersect(xMatch,yMatch);
         FEA(j).topInds = intersect(xMatch,zMatch);
     end
 
-
-% 
-%     for j = 5;
-%         sideL = 243.4350; 
-% %         sideL = 243.4350; 
-%         circleDistance = 300;               % distance from base to haltere 
-%         circleRadius = 150;                 % radius of haltere   
-%         mindist =  min( abs( FEA(j).xyz(:,1) - circleDistance) );
-%         xMatch = find(  abs(FEA(j).xyz(:,1) - circleDistance) <= (mindist+1) );
-%         yMatch = find( round( abs( FEA(j).xyz(:,2) ), 7) == sideL );
-%         zMatch = find( round( abs( FEA(j).xyz(:,3) ), 7) == sideL  );
-% 
-%         FEA(j).sideInds = intersect(xMatch,yMatch);
-%         FEA(j).topInds = intersect(xMatch,zMatch);
-%     end
-
-
-%% 
-
-
-        sideL = 243.4350; 
-
-FEA(5).xrtheta(:,1) = FEA(5).xyz(:,1);
-FEA(5).xrtheta(:,2) = sqrt( FEA(5).xyz(:,2).^2  +  FEA(5).xyz(:,3).^2 );
-FEA(5).xrtheta(:,3) = atan2( FEA(5).xyz(:,3), FEA(5).xyz(:,2) ) +pi ;
-
-for k=1:length(xDes)
-    dx = abs(FEA(5).xrtheta(:,1)-xDes(k) );
-    for l = 1:length(theta)
-        if any( [1/4,3/4,5/4,7/4]*pi == theta(l))
-            da = abs(FEA(5).xrtheta(:,3) - theta(l) );
-            J = dx.^2 + dr.^2+ (da*250.^2);
-            [V,I] = min(J);
-            Xfront(k,l) = FEA(5).xyz(I,1) ; 
-            Yfront(k,l) = FEA(5).xyz(I,2) ; 
-            Zfront(k,l) = FEA(5).xyz(I,3) ; 
-        else
-            display('happened')
-            dr = abs(FEA(5).xrtheta(:,2)- sqrt(2)*sideL*0.1 );
-            da = abs(FEA(5).xrtheta(:,3) - theta(l) );
-            J = dx.^2 + dr.^2+ (da*250.^2);
-            [V,I] = min(J);
-            Xfront(k,l) = FEA(5).xyz(I,1) ; 
-            Yfront(k,l) = FEA(5).xyz(I,2) ; 
-            Zfront(k,l) = FEA(5).xyz(I,3) ; 
-        end
+    sideL = 243.435; 
+    topL = 20.2865;
+    topV = linspace(-topL,topL,5);
+    sideV = linspace(topL,sideL,5);
+            % y, z 
+crossLoc = [  topV(1:5)'        , [1,1,1,1,1]'*sideL; 
+             [1,1,1,1]'*topL    ,  flipud(sideV(1:4)') ; 
+                 sideV(2:5)'    , [1,1,1,1]'*topL  ;
+             [1,1,1,1]'*sideL   ,  -topV(2:5)'    ;
+             flipud(sideV(1:4)') , -[1,1,1,1]'*topL;
+             [1,1,1,1]'*topL, -sideV(2:5)';
+              -topV(2:5)', -[1,1,1,1]'*sideL;
+              -[1,1,1,1]'*topL, -  flipud(sideV(1:4)')
+               -sideV(2:5)',  -[1,1,1,1]'*topL
+               -[1,1,1,1]'*sideL , topV(2:5)'
+               flipud(-sideV(1:4)'), [1,1,1,1]'*topL 
+                -[1,1,1,1]'*topL, sideV(2:5)'
+              ];
+          
+xDes = 0:150:300;
+for k= 1:length(xDes)
+    for k2 = 1:length(crossLoc)
+        
+       Xback(k,k2) = xDes(k);
+       Yback(k,k2) = crossLoc(k2,1); 
+       Zback(k,k2) = crossLoc(k2,2); 
     end
 end
 
-
-xDes = [0:150:300];
-for k=1:length(xDes)
-    dx = abs(FEA(5).xrtheta(:,1)-xDes(k) );
-    for l = 1:length(theta)
-        if any( [1/4,3/4,5/4,7/4]*pi == theta(l))
-            dr = abs(FEA(5).xrtheta(:,2)- sqrt(2)*sideL );
-            da = abs(FEA(5).xrtheta(:,3) - theta(l) );
-            J = dx.^2 + dr.^2+ (da*250.^2);
-            [V,I] = min(J);
-            Xfront(k,l) = FEA(5).xyz(I,1) ; 
-            Yfront(k,l) = FEA(5).xyz(I,2) ; 
-            Zfront(k,l) = FEA(5).xyz(I,3) ; 
-%             Xfront(k,l) = 1 ; 
-%             Yfront(k,l) = 1 ; 
-%             Zfront(k,l) = 1 ; 
-        else
-            display('happened')
-            dr = abs(FEA(5).xrtheta(:,2)- sqrt(2)*sideL*0.1 );
-            da = abs(FEA(5).xrtheta(:,3) - theta(l) );
-            J = dx.^2 + dr.^2+ (da*100.^2);
-            [V,I] = min(J);
-            Xfront(k,l) = FEA(5).xyz(I,1) ; 
-            Yfront(k,l) = FEA(5).xyz(I,2) ; 
-            Zfront(k,l) = FEA(5).xyz(I,3) ; 
-        end
+xDes = 300:150:4600;
+for k= 1:length(xDes)
+    for k2 = 1:length(crossLoc)
+        
+       Xfront(k,k2) = xDes(k);
+       Yfront(k,k2) = crossLoc(k2,1); 
+       Zfront(k,k2) = crossLoc(k2,2); 
     end
 end
-   
+
+%        
+
+
+
 surfParamBackground = {'FaceAlpha',0.5,'EdgeAlpha',0.2};
 surfParamForeground = {'FaceAlpha',0.5,'EdgeAlpha',0.2};
 surfParamPlane = {'FaceAlpha',0.2,'EdgeAlpha',0.4};
@@ -185,37 +147,23 @@ C = zeros(size(x));
     hold on 
 	sback = surf(Xback,Yback,Zback,Cb);
         set(sback,surfParamBackground{:})
-    splane = surf( [1,1;1,1]*300, [-1,1;-1,1]*300,[-1,-1;1,1]*300,[1,1;1,1]*0);
+    splane = surf( [1,1;1,1]*300, [-1,1;-1,1]*400,[-1,-1;1,1]*400,[1,1;1,1]*0)
         set(splane,surfParamPlane{:})
 	sfront = surf(Xfront,Yfront,Zfront,Cf);
         set(sfront,surfParamForeground{:})
-%     s2 = surf(Xj,Yj,Zj,Cj);
-%         set(s2,surfParamForeground{:})
-%     s1 = surf(x+5e3,y,z,C);
-%         set(s1,surfParamForeground{:})
-% 
+    s1 = surf(x+5e3,y,z,C);
+        set(s1,surfParamForeground{:})
 
     thetTemp = linspace(0,2*pi,50);
-    r = 250; 
-    plot3( 300*ones(length(thetTemp)), sin(thetTemp)*r, cos(thetTemp)*r,'k') 
-    
-    
-% selected_dots = 5:9;
-% for kl = 1:length(selected_dots)
-%     k = selected_dots(kl);
-%     scatter3( 300,...
-%     FEA(5).xyz( FEA(5).circleInds(k), 2),...
-%     FEA(5).xyz( FEA(5).circleInds(k), 3),...
-%     10,'filled','k')
-% end
-%     scatter3( FEA(1).xyz( FEA(1).sideInds,1), FEA(1).xyz( FEA(1).sideInds,2), FEA(1).xyz( FEA(1).sideInds,3),30,'filled','r') 
-%     scatter3( FEA(1).xyz( FEA(1).topInds,1), FEA(1).xyz( FEA(1).topInds,2), FEA(1).xyz( FEA(1).topInds,3),30,'filled','b')
+    r = sideL; 
+    plot3( 300*ones(length(crossLoc(:,1)),1), crossLoc(:,1)', crossLoc(:,2)','k') 
+    scatter3( FEA(1).xyz( FEA(1).sideInds,1), FEA(1).xyz( FEA(1).sideInds,2), FEA(1).xyz( FEA(1).sideInds,3),30,'filled','r') 
+    scatter3( FEA(1).xyz( FEA(1).topInds,1), FEA(1).xyz( FEA(1).topInds,2), FEA(1).xyz( FEA(1).topInds,3),30,'filled','b')
         shading faceted
         axis tight;  axis off; axis equal
         xlabel('x');ylabel('y');zlabel('z')
         view(60,15)
         
-       
 %% Setting paper size for saving 
 
 set(gca, 'LooseInset', get(gca(), 'TightInset')); % remove whitespace around figure
@@ -234,3 +182,45 @@ set(fig1, 'PaperPosition', myfiguresize);
 print(fig1, ['figs' filesep 'Figure5_crossSectionmesh'], '-dsvg', '-r600');
         
 
+
+%% 
+
+fig2 = figure();
+    width = 4;     % Width in inches,   find column width in paper 
+    height = 4;    % Height in inches
+    set(fig2, 'Position', [fig2.Position(1:2)-[width*100,0] width*100, height*100]); %<- Set size
+    colormap(strainScheme)%     colorbar
+% 
+hold on
+    splane = surf( [1,1;1,1]*300, [-1,1;-1,1]*300,[-1,-1;1,1]*300,[1,1;1,1]*0)
+        set(splane,surfParamPlane{:})
+% 	sfront = surf(Xfront,Yfront,Zfront,Cf);
+%         set(sfront,surfParamForeground{:})
+%     s1 = surf(x+5e3,y,z,C);
+%         set(s1,surfParamForeground{:})
+
+    thetTemp = linspace(0,2*pi,50);
+    r = sideL; 
+    plot3( 300*ones(length(crossLoc(:,1)),1), crossLoc(:,1)', crossLoc(:,2)','k') 
+    scatter3( FEA(1).xyz( FEA(1).sideInds,1), FEA(1).xyz( FEA(1).sideInds,2), FEA(1).xyz( FEA(1).sideInds,3),30,'filled','r') 
+    scatter3( FEA(1).xyz( FEA(1).topInds,1), FEA(1).xyz( FEA(1).topInds,2), FEA(1).xyz( FEA(1).topInds,3),30,'filled','b')
+        shading faceted
+        axis tight;  axis off; axis equal
+        xlabel('x');ylabel('y');zlabel('z')
+        view(90,0)
+
+set(gca, 'LooseInset', get(gca(), 'TightInset')); % remove whitespace around figure
+tightfig;
+set(fig2,'InvertHardcopy','on');
+set(fig2,'PaperUnits', 'inches');
+papersize = get(fig2, 'PaperSize');
+left = (papersize(1)- width)/2;
+bottom = (papersize(2)- height)/2;
+myfiguresize = [left, bottom, width, height];
+set(fig2, 'PaperPosition', myfiguresize);
+print(fig2, ['figs' filesep 'Figure5_crossDots' ], '-dpng', '-r600');
+stupid_ratio = 15/16;
+myfiguresize = [left, bottom, width*stupid_ratio, height*stupid_ratio];
+set(fig2, 'PaperPosition', myfiguresize);
+print(fig2, ['figs' filesep 'Figure5_crossDots'], '-dsvg', '-r600');
+        
