@@ -8,6 +8,7 @@ loadName = 'figure1_deform';
 saveName = 'figure1_deform';
 
 renew_data_load = false
+% renew_data_load = true
 if renew_data_load
     FEA(1).name = 'Haltere_CraneFly_Sphere_Om0';
     FEA(2).name = 'Haltere_CraneFly_Sphere_Om10';
@@ -67,8 +68,8 @@ end
 
 %% 
 t_ind = 100;
-deform_mult = 30;
-OOP_mult = -300;
+deform_mult = 40;
+OOP_mult = -600;
 xDes = [0:150:4800];
 
 FEA(1).xrtheta(:,1) = FEA(1).xyz(:,1);
@@ -128,7 +129,7 @@ day = (FEA(2).yAngle(t_ind)-FEA(1).yAngle(t_ind)) *OOP_mult*1.85;
 daz = (FEA(2).zAngle(t_ind)-FEA(1).zAngle(t_ind)) *OOP_mult*1.85;
 
 surfParamBackground = {'FaceAlpha',0.2,'EdgeAlpha',0.1};
-surfParamBackgroundTwist = {'FaceAlpha',0.4,'EdgeAlpha',0.3};
+surfParamBackgroundTwist = {'FaceAlpha',0.2,'EdgeAlpha',0.2};
 surfParamBackgroundTwistStalk = {'FaceAlpha',0,'EdgeAlpha',0.1};
 surfParamForeground = {'EdgeAlpha',0.4};
     
@@ -145,7 +146,7 @@ xc = 0; yc = 0; zc = 0;
 xr = 300; yr = 300;zr = 946; 
 [z,y,x] = ellipsoid(zc,yc,xc,zr,yr,xr,n);
 
-angles = [0,0.1,0];
+angles = [0,0.3,0];
 eul_1 = euler_angle('X',angles(1))^-1;
 eul_2 = euler_angle('Y',angles(2))^-1;
 eul_3 = euler_angle('Z',angles(3))^-1;
@@ -182,7 +183,7 @@ subplot(311); hold on
         shading faceted
         axis tight;  axis off; axis equal
         xlabel('x');ylabel('y');zlabel('z')
-        view(40,40)
+        view(40,17)
         
 angles = [0,0,0.1];
 eul_1 = euler_angle('X',angles(1))^-1;
@@ -216,7 +217,7 @@ subplot(312); hold on
         shading faceted
         axis tight;  axis off; axis equal
         xlabel('x');ylabel('y');zlabel('z')
-        view(40,40)
+        view(40,17)
         
 %twist 
 angles = [0.8,0,0];
@@ -258,7 +259,7 @@ subplot(313); hold on
 %     plot stalks 
 	sb = surf(Xb,Yb,Zb,Cb);
         set(sb,surfParamBackgroundTwistStalk{:})
-    s2 = surf(Xtwist,Ytwist,Ztwist,-Ctwist);
+    s2 = surf(Xtwist,Ytwist,Ztwist,Cb);
         set(s2,surfParamForeground{:})
         colormap(strainScheme)%     colorbar
     s1 = surf(x+5e3,y,z,C);
@@ -272,7 +273,7 @@ subplot(313); hold on
         shading faceted
         axis tight;  axis off; axis equal
         xlabel('x');ylabel('y');zlabel('z')
-        view(40,40)
+        view(40,17)
         
 %% Setting paper size for saving 
 

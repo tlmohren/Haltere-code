@@ -51,6 +51,7 @@ if renew_data_load
 
         FEA(j).sideInds = intersect(xMatch,yMatch);
         FEA(j).topInds = intersect(xMatch,zMatch);
+        [~, FEA(j).phi, ~] = loadCSV( ['data' filesep  FEA(j).name], { 'flapangle'});
         
     end
     er = 0.01;
@@ -126,7 +127,8 @@ for jj = 1:length(FEA)/2
             strainInterp =  interp1(t_plot,strainTemp ,tNew,'spline');
 
             STA = STAfun(STAt);
-            strainConv = conv( [zeros(1,length(STA)-1),strainInterp], fliplr( STA), 'valid');
+%             strainConv = conv( [zeros(1,length(STA)-1),strainInterp], fliplr( STA), 'valid');
+            strainConv = conv( [zeros(1,length(STA)-1),strainInterp], ( STA), 'valid');
             calib_param(j,k) = max(  strainConv );
     %         FEA(j).pFire(k,:) = NLDfun( strainConv/calib_param(j,k) );
             if jj ~=7
@@ -270,212 +272,167 @@ end
 
 
 
+%% 
 
+    
+    len1 = 26;
+    start1 = 151;
+    It1 = start1:(start1+len1-1);
+%     t_plot1 = (0:len1-1)*0.001;
+    t_plot1 = linspace(0,1,len1);
 
+    len10 = 261;
+    start10 = 1501;
+    It10 = start10:(start10+len10-1);
+    t_plot10 = (0:len10-1)*0.0001;
+    t_plot10 = linspace(0,1,len10);
+        
+    spike_order = [5:13, 13:16, 1:5];
 
+    fig6= figure();
+        width = 5;     % Width in inches,   find column width in paper 
+        height = 5;    % Height in inches
+        set(fig6, 'Position', [fig6.Position(1:2)-[width,height]*100 width*100, height*100]); %<- Set size
+        
+    subplot(1,3,1); hold on 
+        scatter( FEA(1).xyz( FEA(1).circleInds(5:13),2 ),  FEA(1).xyz( FEA(1).circleInds(5:13),3 ) +150+350,'k','filled')
 
+        scatter( FEA(1).xyz( FEA(1).circleInds( [13:16, 1:5] ),2 ),  FEA(1).xyz( FEA(1).circleInds( [13:16, 1:5] ),3 ) +150 ,'k','filled')
+        theta = 0:0.001:pi;
+        plot( -sin(theta)*150,cos(theta)*150 +150+350,'k')
+        plot( sin(theta)*150,cos(theta)*150 +150,'k')
 
-
-%     
-%     
-% for jj = 7
-% %     for j = 1:2%length(FEA)
-%     for j = [1,2]+(2*(jj-1))
-%         for k = 1:length(FEA(j).circleInds)
-%          tL = size(FEA(j).strain,2);
-%             strainTemp = FEA(j).strain( FEA(j).circleInds(k),:);
-%             t_plot = (1:tL)/fSamp;
-%             tNew = linspace(t_plot(1),t_plot(end), tL*subSamp ) ; 
-%             strainInterp =  interp1(t_plot,strainTemp ,tNew,'spline');
-% 
-%             STA = STAfun(STAt);
-%             strainConv = conv( [zeros(1,length(STA)-1),strainInterp], fliplr( STA), 'valid');
-%             calib_param(j,k) = max(  strainConv );
-%     %         FEA(j).pFire(k,:) = NLDfun( strainConv/calib_param(j,k) );
-%             FEA(j).pFire(k,:) = NLDfun( strainConv/calib_param_max(k) );
-%             FEA(j).spikeInds{k} = findSpikes( FEA(j).pFire(k,:) ); 
-%         end
-%     end
-%     for k = 1:length(FEA(j).circleInds)
-%        FEA(jj*2).dI = FEA(jj*2).spikeInds{k}(end) - FEA(jj*2-1).spikeInds{k}(end);
-%        FEA(jj*2).dT(k) = abs(FEA(jj*2).dI/1e4 );
-%     end
-%     selected_dots = 5:9;
-%     len = 101;
-%     start = 35;
-%     It = start:(start+len-1);
-%     t_plot = (0:len-1)*0.001;
-%     
-%     fig2 = figure();
-%         width = 2;     % Width in inches,   find column width in paper 
-%         height = 3;    % Height in inches
-%         set(fig2, 'Position', [fig2.Position(1:2),  width*100, height*100]); %<- Set size
-% 
-%     for kl =1:length(selected_dots)
-%         k = selected_dots(kl);
-%         subplot(5,1,kl)
+        axis equal
+        axis([-180,180,-10,900])
+    
+    subplot(132) ; hold on 
+        plot(  t_plot1, FEA(1).phi(1,It1) +10 ,'k')
+    subplot(133) ; hold on 
+        plot(  t_plot1, FEA(1).phi(1,It1) +10 ,'k')
+        
+    for kl =1:length(spike_order)
+        kl
+        k = spike_order( kl ) ;
 %         hold on
-%         for j = [1,2]+(2*(jj-1))
-%             plot( t_plot,FEA(j).strain(FEA(j).circleInds(k),It )  )
-%         end
-%         if kl == 3
-%             ylabel('$\epsilon$')
-%         end
-%         ax = gca();
-%         if kl == 5
-%             set(ax,axCircle{:})
-%             xlabel('Time (s)')
-%         else
-%             set(ax,axZero{:})
-%         end
-%     end
-%     
-%     
-%     len10 = 1001;
-%     start10 = 351;
+        for j = [1,2]%[1,2]+(2*(jj-1))
+            subplot(1,3,1+j)
+            spike_ind_temp = FEA(j).spikeInds{k};
+                which_ = (spike_ind_temp<=It10(end)) & (spike_ind_temp>=It10(1));
+                
+            if any(spike_ind_temp) & kl <=9
+               plot( [1,1]'*t_plot10(  spike_ind_temp(which_) - start10 ),...
+                   ([9 ; 8.6] - kl*0.5 -1)  * ones(1, length(  spike_ind_temp(which_) )),'k')
+            elseif any(spike_ind_temp) 
+               plot( [1,1]'*t_plot10(  spike_ind_temp(which_) - start10 ),...
+                   ([9 ; 8.6] - kl*0.5 - 2)  * ones(1, length(  spike_ind_temp(which_) )),'k')
+            end
+        end
+    end
+    
+%     axis([0,0.025,-5,12])
+    subplot(132)
+    axis([0,1,-5,12])
+
+    
+    
+%% 
+   
+%     len1 = 26;
+%     start1 = 151;
+%     It1 = start1:(start1+len1-1);
+%     t_plot1 = (0:len1-1)*0.001;
+% 
+%     len10 = 261;
+%     start10 = 1501;
 %     It10 = start10:(start10+len10-1);
 %     t_plot10 = (0:len10-1)*0.0001;
-%     fig6= figure();
-%         width = 2;     % Width in inches,   find column width in paper 
-%         height = 3;    % Height in inches
-%         set(fig6, 'Position', [fig6.Position(1:2)+[width*1,0]*100 width*100, height*100]); %<- Set size
-% 
-%     for kl =1:length(selected_dots)
-%         k = selected_dots(kl);
-%         subplot(5,1,kl)
+%         
+        
+    spike_order = [5:13, 13:16, 1:5];
+
+    fig7= figure();
+        width = 5;     % Width in inches,   find column width in paper 
+        height = 5;    % Height in inches
+        set(fig7, 'Position', [fig7.Position(1:2)-[width,height]*100 width*100, height*100]); %<- Set size
+        
+    subplot(1,2,1); hold on 
+        scatter( FEA(1).xyz( FEA(1).circleInds(5:13),2 ),  FEA(1).xyz( FEA(1).circleInds(5:13),3 ) +150+350,'k','filled')
+
+        scatter( FEA(1).xyz( FEA(1).circleInds( [13:16, 1:5] ),2 ),  FEA(1).xyz( FEA(1).circleInds( [13:16, 1:5] ),3 ) +150 ,'k','filled')
+        theta = 0:0.001:pi;
+        plot( -sin(theta)*150,cos(theta)*150 +150+350,'k')
+        plot( sin(theta)*150,cos(theta)*150 +150,'k')
+
+        axis equal
+        axis([-180,180,-10,900])
+    
+    subplot(122) ; hold on 
+        plot(  t_plot1, FEA(1).phi(1,It1) +10 ,'k')
+%     subplot(133) ; hold on 
+%         plot(  t_plot1, FEA(1).phi(1,It1) +10 ,'k')
+        
+    for kl =1:length(spike_order)
+%         kl
+        k = spike_order( kl ) ;
 %         hold on
-%         for j = [1,2]+(2*(jj-1))
-%             spike_ind_temp = FEA(j).spikeInds{k};
-%                 which_ = spike_ind_temp<=It10(end);
-%            plot( t_plot10,FEA(j).pFire( k , It10) )
-% %            try
-%             if any(spike_ind_temp)
-%                plot( [1,1]'*t_plot10(  spike_ind_temp(which_) - start10 ),...
-%                    ([1.75 ; 1.55] - (j-(2*(jj-1)))/4 )  * ones(1, length(  spike_ind_temp(which_) )),'k')
-%                FEA(j).timing{k} = t_plot10(  spike_ind_temp(which_) - start10 );
-%                try
-%                    if mod(j,2) == 0
-%                        FEA(j).dt{k} = FEA(j).timing{k} - FEA(j-1).timing{k};
-%                        text(0.01, 1,['$\Delta$ t=',num2str(FEA(j).dt{k}(1))])
-%                    end
-%                end
-%             else
-%                    text(0.01, 1,['$\Delta$ t= NaN'])
-%             end
-%        end
-%     %     
-%         ax = gca();
-%         if kl == 5
-%             set(ax,axCircleSpike{:})
-%        xlabel('Time (s)')
-%         else
-%             set(ax,axZeroSpike{:})
-%         end
-%         if kl == 3
-%         ylabel('Prob. of Firing')
-%         end
-%     end
-% end
-% 
-% 
-
-
-
-
-
-
-
-
-
-
-%% 
-% % % fig3 = figure();
-% % %     width = 2;     % Width in inches,   find column width in paper 
-% % %     height = 3;    % Height in inches
-% % %     set(fig3, 'Position', [fig3.Position(1:2)  width*100, height*100]); %<- Set size
-% % % subplot(211)
-% % %     tSTA = -40:0.1:0;
-% % %     plot(tSTA,STAfun(tSTA))
-% % % subplot(212)
-% % %     s = -1:0.01:1;
-% % %     plot(s,NLDfun(s))
-% % %     ylabel('blabla')
-
-%% 
-
-
-%% Setting paper size for saving 
-% set(gca, 'LooseInset', get(gca(), 'TightInset')); % remove whitespace around figure
-% set(fig2,'InvertHardcopy','on');
-% set(fig2,'PaperUnits', 'inches');
-% papersize = get(fig2, 'PaperSize');
-% left = (papersize(1)- width)/2;
-% bottom = (papersize(2)- height)/2;
-% stupid_ratio = 15/16;
-% myfiguresize = [left, bottom, width*stupid_ratio, height*stupid_ratio];
-% set(fig2, 'PaperPosition', myfiguresize);
-% print(fig2, ['figs' filesep 'Figure4_spikeStrain'], '-dsvg');
-% myfiguresize = [left, bottom, width, height];
-% set(fig2, 'PaperPosition', myfiguresize);
-% print(fig2, ['figs' filesep 'Figure4_spikeStrain' ], '-dpng', '-r600');
-
-% 
-% set(gca, 'LooseInset', get(gca(), 'TightInset')); % remove whitespace around figure
-% set(fig3,'InvertHardcopy','on');
-% set(fig3,'PaperUnits', 'inches');
-% papersize = get(fig3, 'PaperSize');
-% left = (papersize(1)- width)/2;
-% bottom = (papersize(2)- height)/2;
-% myfiguresize = [left, bottom, width, height];
-% set(fig3, 'PaperPosition', myfiguresize);
-% print(fig3, ['figs' filesep 'Figure3_spikeEncoder' ], '-dpng', '-r600');
-% stupid_ratio = 15/16;
-% myfiguresize = [left, bottom, width*stupid_ratio, height*stupid_ratio];
-% set(fig3, 'PaperPosition', myfiguresize);
-% print(fig3, ['figs' filesep 'Figure3_spikeEncoder'], '-dsvg', '-r600');
-% 
-% 
-% set(gca, 'LooseInset', get(gca(), 'TightInset')); % remove whitespace around figure
-% set(fig4,'InvertHardcopy','on');
-% set(fig4,'PaperUnits', 'inches');
-% papersize = get(fig4, 'PaperSize');
-% left = (papersize(1)- width)/2;
-% bottom = (papersize(2)- height)/2;
-% myfiguresize = [left, bottom, width, height];
-% set(fig4, 'PaperPosition', myfiguresize);
-% print(fig4, ['figs' filesep 'Figure4_spikeFire' ], '-dpng', '-r600');
-% stupid_ratio = 15/16;
-% myfiguresize = [left, bottom, width*stupid_ratio, height*stupid_ratio];
-% set(fig4, 'PaperPosition', myfiguresize);
-% print(fig4, ['figs' filesep 'Figure4_spikeFire'], '-dsvg');
-% 
-% 
-% set(gca, 'LooseInset', get(gca(), 'TightInset')); % remove whitespace around figure
-% set(fig5,'InvertHardcopy','on');
-% set(fig5,'PaperUnits', 'inches');
-% papersize = get(fig5, 'PaperSize');
-% left = (papersize(1)- width)/2;
-% bottom = (papersize(2)- height)/2;
-% stupid_ratio = 15/16;
-% myfiguresize = [left, bottom, width*stupid_ratio, height*stupid_ratio];
-% set(fig5, 'PaperPosition', myfiguresize);
-% print(fig5, ['figs' filesep 'Figure4_spikeSpikes'], '-dsvg');
-% myfiguresize = [left, bottom, width, height];
-% set(fig5, 'PaperPosition', myfiguresize);
-% print(fig5, ['figs' filesep 'Figure4_spikeSpikes' ], '-dpng', '-r600');
-% 
-% 
-% set(gca, 'LooseInset', get(gca(), 'TightInset')); % remove whitespace around figure
-% set(fig6,'InvertHardcopy','on');
-% set(fig6,'PaperUnits', 'inches');
-% papersize = get(fig6, 'PaperSize');
-% left = (papersize(1)- width)/2;
-% bottom = (papersize(2)- height)/2;
-% stupid_ratio = 15/16;
-% myfiguresize = [left, bottom, width*stupid_ratio, height*stupid_ratio];
-% set(fig6, 'PaperPosition', myfiguresize);
-% print(fig6, ['figs' filesep 'Figure4_spikeFireSpikes'], '-dsvg');
-% myfiguresize = [left, bottom, width, height];
-% set(fig6, 'PaperPosition', myfiguresize);
-% print(fig6, ['figs' filesep 'Figure4_spikeFireSpikes' ], '-dpng', '-r600');
-
+        for j = [1]%[1,2]+(2*(jj-1))
+%             subplot(1,32)
+            spike_ind_temp = FEA(j).spikeInds{k};
+                which_ = (spike_ind_temp<=It10(end)) & (spike_ind_temp>=It10(1));
+                
+            if any(spike_ind_temp) & kl <=9
+               plot( [1,1]'*t_plot10(  spike_ind_temp(which_) - start10 ),...
+                   ([9 ; 8.6] - kl*0.5 -1)  * ones(1, length(  spike_ind_temp(which_) )),'k')
+            elseif any(spike_ind_temp) 
+               plot( [1,1]'*t_plot10(  spike_ind_temp(which_) - start10 ),...
+                   ([9 ; 8.6] - kl*0.5 - 2)  * ones(1, length(  spike_ind_temp(which_) )),'k')
+            end
+        end
+        for j = [2]%[1,2]+(2*(jj-1))
+%             subplot(1,32)
+            spike_ind_temp = FEA(j).spikeInds{k};
+                which_ = (spike_ind_temp<=It10(end)) & (spike_ind_temp>=It10(1));
+                
+            if any(spike_ind_temp) & kl <=9
+               plot( [1,1]'*t_plot10(  spike_ind_temp(which_) - start10 ),...
+                   ([9 ; 8.6] - kl*0.5 -1)  * ones(1, length(  spike_ind_temp(which_) )),'r')
+            elseif any(spike_ind_temp) 
+               plot( [1,1]'*t_plot10(  spike_ind_temp(which_) - start10 ),...
+                   ([9 ; 8.6] - kl*0.5 - 2)  * ones(1, length(  spike_ind_temp(which_) )),'r')
+            end
+        end
+        if kl == 1
+               plot( [1,1]'*t_plot10(  spike_ind_temp(which_) - start10 ),...
+                   ([-3,10])  * ones(1, length(  spike_ind_temp(which_) )),':k')
+        elseif kl == 9
+               plot( [1,1]'*t_plot10(  spike_ind_temp(which_) - start10 ),...
+                   ([-3,10])  * ones(1, length(  spike_ind_temp(which_) )),':k')
+        end
+    end
+    
+    
+%       plot( [1,1]'*t_plot10(  spike_ind_temp(which_) - start10 ),...
+%     axis([0,0.025,-5,12])
+%     subplot(132)
+    axis([0,1,-3,12])
+    xlabel('Time (t/T)')
+    ylabel('Flapping angle $\phi(t)$')
+%     ax = gca();
+    set(gca(),'YTick', [10-pi/2,10,10+pi/2] ,'YTickLabel',{'$\frac{\pi}{2}$',0,'$\frac{\pi}{2}$' } )
+    title('Spikes along circumference')
+    
+    
+    
+    set(gca, 'LooseInset', get(gca(), 'TightInset')); % remove whitespace around figure
+    set(fig7,'InvertHardcopy','on');
+    set(fig7,'PaperUnits', 'inches');
+    papersize = get(fig7, 'PaperSize');
+    left = (papersize(1)- width)/2;
+    bottom = (papersize(2)- height)/2;
+    myfiguresize = [left, bottom, width, height];
+    set(fig7, 'PaperPosition', myfiguresize);
+    print(fig7, ['figs' filesep 'Figure7_spikeSphere' ], '-dpng', '-r600');
+    stupid_ratio = 15/16;
+    myfiguresize = [left, bottom, width*stupid_ratio, height*stupid_ratio];
+    set(fig7, 'PaperPosition', myfiguresize);
+    print(fig7, ['figs' filesep 'Figure7_spikeSphere'  ], '-dsvg', '-r600');
