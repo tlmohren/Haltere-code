@@ -7,8 +7,8 @@ run('config_file.m')
 loadName = 'figure3_deform';
 saveName = 'figure3_deform';
 
-renew_data_load = true
-% renew_data_load = false
+% renew_data_load = true
+renew_data_load = false
 if renew_data_load
     FEA(1).name = 'Haltere_CraneFly_Sphere_Om0';
     FEA(2).name = 'Haltere_CraneFly_Sphere_Om10';

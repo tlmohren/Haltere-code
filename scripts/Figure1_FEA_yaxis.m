@@ -74,7 +74,10 @@ xDes = [0:150:4800];
 
 FEA(1).xrtheta(:,1) = FEA(1).xyz(:,1);
 FEA(1).xrtheta(:,2) = sqrt( FEA(1).xyz(:,2).^2  +  FEA(1).xyz(:,3).^2 );
-FEA(1).xrtheta(:,3) = atan2( FEA(1).xyz(:,3), FEA(1).xyz(:,2) ) +pi ;
+% FEA(1).xrtheta(:,3) = atan2( FEA(1).xyz(:,3), FEA(1).xyz(:,2) ) +pi ;
+FEA(1).xrtheta(:,3) = wrapTo2Pi(  atan2( FEA(1).xyz(:,3), FEA(1).xyz(:,2) ) +pi -0.02 )+0.02;
+
+
 FEA(2).xrtheta = FEA(1).xrtheta;
 
 for j = 1:2%length(FEA)

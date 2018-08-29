@@ -7,7 +7,7 @@ run('config_file.m')
 loadName = 'figure3_strainData';
 saveName = 'figure3_strainData';
 
-renew_data_load = true
+renew_data_load = false
 if renew_data_load
 %     FEA(1).name = 'Haltere_CraneFly_Sphere_Om0';
 %     FEA(2).name = 'Haltere_CraneFly_Sphere_Om10';

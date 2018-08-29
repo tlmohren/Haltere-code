@@ -25,6 +25,7 @@ for j = 1%:length(FEA)
     FEA(j).xrtheta(:,1) = FEA(j).xyz(:,1);
     FEA(j).xrtheta(:,2) = sqrt( FEA(j).xyz(:,2).^2  +  FEA(j).xyz(:,3).^2 );
     FEA(j).xrtheta(:,3) = atan2( FEA(j).xyz(:,3), FEA(j).xyz(:,2) ) +pi ;
+    FEA(1).xrtheta(:,3) = wrapTo2Pi(  atan2( FEA(1).xyz(:,3), FEA(1).xyz(:,2) ) +pi -0.02 )+0.02;
     for k=1:length(xDes)
         dx = abs(FEA(j).xrtheta(:,1)-xDes(k) );
         dr = abs(FEA(j).xrtheta(:,2)-150 );
