@@ -158,14 +158,14 @@ end
     It1 = start1:(start1+len1-1);
 %     t_plot1 = (0:len1-1)*0.001;
 %     t_plot1 = linspace(0,1,len1);
-    t_plot1 = linspace(0,40,len1);
+    t_plot1 = linspace(0,25,len1);
 
     len10 = 261;
     start10 = 1651;
     It10 = start10:(start10+len10-1);
 %     t_plot10 = (0:len10-1)*0.0001;
 %     t_plot10 = linspace(0,1,len10);
-    t_plot10 = linspace(0,40,len10);
+    t_plot10 = linspace(0,25,len10);
         
     spike_order = [5:13, 13:16, 1:5];
 
@@ -206,8 +206,8 @@ end
     
     
     
-rectangle('Position',[1,2.9,38,4.8],'Curvature',0,'FaceColor',[1,1,1]*0.95)
-rectangle('Position',[1,-2.6,38,4.8],'Curvature',0,'FaceColor',[1,1,1]*0.95)
+rectangle('Position',[1,2.9,24,4.8],'Curvature',0,'FaceColor',[1,1,1]*0.95)
+rectangle('Position',[1,-2.6,24,4.8],'Curvature',0,'FaceColor',[1,1,1]*0.95)
 
 % for j = 1:20
 % rectangle('Position',[2*j,-3,1,10],'Curvature',0,'FaceColor',[1,1,1]*0.8,'EdgeColor','none')
@@ -260,7 +260,7 @@ rectangle('Position',[1,-2.6,38,4.8],'Curvature',0,'FaceColor',[1,1,1]*0.95)
 %     axis([0,0.025,-5,12])
 %     subplot(132)
 %     axis([0,1,-3,12])
-    axis([0,40,-3,12])
+    axis([0,25,-3,12])
     xlabel('Time (ms)')
     ylabel('Flapping angle $\phi(t)$')
 %     ax = gca();

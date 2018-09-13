@@ -4,25 +4,26 @@ addpathFolderStructureHaltere()
 run('config_file.m')
 
 %%
-loadName = 'figureA1_strainData';
-saveName = 'figureA1_strainData';
+loadName = 'figureA3_strainData';
+saveName = 'figureA3_strainData';
 
-% renew_data_load = false
-renew_data_load = true
+renew_data_load = false
+% renew_data_load = true
 if renew_data_load
     FEA(1).name = 'Haltere_CraneFly_Sphere_Om0';
     FEA(2).name = 'Haltere_CraneFly_Sphere_Om10';
-    FEA(3).name = 'Haltere_CraneFly_ellipsoidHor_Om0';
-    FEA(4).name = 'Haltere_CraneFly_ellipsoidHor_Om10';
-    FEA(5).name = 'Haltere_CraneFly_ellipsoidVer_Om0';
-    FEA(6).name = 'Haltere_CraneFly_ellipsoidVer_Om10';   
+%     FEA(3).name = 'Haltere_CraneFly_ellipsoidHor_Om0';
+%     FEA(4).name = 'Haltere_CraneFly_ellipsoidHor_Om10';
+%     FEA(5).name = 'Haltere_CraneFly_ellipsoidVer_Om0';
+%     FEA(6).name = 'Haltere_CraneFly_ellipsoidVer_Om10';   
     for j =  1:length(FEA)
         tic
         [FEA(j).xyz, FEA(j).strain, ~] = loadCSV( ['data' filesep  FEA(j).name], { 'eXX' });        toc 
     end
     % Determine Circle locations
     for j = 1:length(FEA)
-        circleDistance = 300;               % distance from base to haltere 
+        circleDistance = 3000;               % distance from base to haltere 
+%         circleDistance = 3900;               % distance from base to haltere 
         circleRadius = 150;                 % radius of haltere   
         mindist =  min( abs( FEA(j).xyz(:,1) - circleDistance) );
         xMatch = find(  abs(FEA(j).xyz(:,1) - circleDistance) <= (mindist+1) );
@@ -52,7 +53,7 @@ FEA(1).xrtheta(:,1) = FEA(1).xyz(:,1);
 FEA(1).xrtheta(:,2) = sqrt( FEA(1).xyz(:,2).^2  +  FEA(1).xyz(:,3).^2 );
 FEA(1).xrtheta(:,3) = wrapTo2Pi(  atan2( FEA(1).xyz(:,3), FEA(1).xyz(:,2) ) +pi -0.02 )+0.02;
 
-
+% xDes 
 for k=1:length(xDes)
     dx = abs(FEA(1).xrtheta(:,1)-xDes(k) );
     dr = abs(FEA(1).xrtheta(:,2)-150 );
@@ -75,7 +76,7 @@ for k=1:length(xDes)
 end
 %% 
 
-xDes = [0:150:300];
+xDes = [0:150:3000];
 for k=1:length(xDes)
     dx = abs(FEA(1).xrtheta(:,1)-xDes(k) );
     dr = abs(FEA(1).xrtheta(:,2)-150 );
@@ -115,7 +116,7 @@ C = zeros(size(x));
     hold on 
 	sback = surf(Xback,Yback,Zback,Cb);
         set(sback,surfParamBackground{:})
-    splane = surf( [1,1;1,1]*300, [-1,1;-1,1]*300,[-1,-1;1,1]*300,[1,1;1,1]*0);
+    splane = surf( [1,1;1,1]*3000, [-1,1;-1,1]*300,[-1,-1;1,1]*300,[1,1;1,1]*0);
         set(splane,surfParamPlane{:})
 	sfront = surf(Xfront,Yfront,Zfront,Cf);
         set(sfront,surfParamForeground{:})
@@ -127,9 +128,9 @@ C = zeros(size(x));
 
     thetTemp = linspace(0,2*pi,50);
     r = 150; 
-    plot3( 300*ones(length(thetTemp)), sin(thetTemp)*r, cos(thetTemp)*r,'k') 
-    scatter3( FEA(1).xyz( FEA(1).sideInds,1), FEA(1).xyz( FEA(1).sideInds,2), FEA(1).xyz( FEA(1).sideInds,3),30,'filled','r') 
-    scatter3( FEA(1).xyz( FEA(1).topInds,1), FEA(1).xyz( FEA(1).topInds,2), FEA(1).xyz( FEA(1).topInds,3),30,'filled','b')
+    plot3( 3000*ones(length(thetTemp)), sin(thetTemp)*r, cos(thetTemp)*r,'k') 
+    scatter3( FEA(1).xyz( FEA(1).sideInds,1), FEA(1).xyz( FEA(1).sideInds,2), FEA(1).xyz( FEA(1).sideInds,3),30,'filled','k') 
+%     scatter3( FEA(1).xyz( FEA(1).topInds,1), FEA(1).xyz( FEA(1).topInds,2), FEA(1).xyz( FEA(1).topInds,3),30,'filled','b')
         shading faceted
         axis tight;  axis off; axis equal
         xlabel('x');ylabel('y');zlabel('z')
@@ -175,23 +176,23 @@ fig2 = figure();
         hold on
         splane = fill(  [1,-1,-1,1]*300,[-1,-1,1,1]*300,[1,1,1,1]);
         plot(  sin(thetTemp)*r, cos(thetTemp)*r,'k') 
-        scatter(  FEA(1).xyz( FEA(1).sideInds,2), FEA(1).xyz( FEA(1).sideInds,3),30,'filled','r') 
-        scatter( FEA(1).xyz( FEA(1).topInds,2), FEA(1).xyz( FEA(1).topInds,3),30,'filled','b')
+        scatter(  FEA(1).xyz( FEA(1).sideInds,2), FEA(1).xyz( FEA(1).sideInds,3),30,'filled','k') 
+    %     scatter( FEA(1).xyz( FEA(1).topInds,2), FEA(1).xyz( FEA(1).topInds,3),30,'filled','b')
         shading faceted
         axis tight;  axis off; axis equal
         xlabel('x');ylabel('y');%zlabel('z')
 %         view(60,15)
-
-    subplot(212)
-        hold on
-        splane = fill(  [1,-1,-1,1]*300,[-1,-1,1,1]*300,[1,1,1,1]);
-        plot(  sin(thetTemp)*r, cos(thetTemp)*r,'k') 
-        scatter(  FEA(1).xyz( FEA(1).sideInds,2), FEA(1).xyz( FEA(1).sideInds,3),30,'filled','r') 
-        scatter( FEA(1).xyz( FEA(1).topInds,2), FEA(1).xyz( FEA(1).topInds,3),30,'filled','b')
-        shading faceted
-        axis tight;  axis off; axis equal
-        xlabel('x');ylabel('y');%zlabel('z')
-%         view(60,15)
+% 
+%     subplot(212)
+%         hold on
+%         splane = fill(  [1,-1,-1,1]*300,[-1,-1,1,1]*300,[1,1,1,1]);
+%         plot(  sin(thetTemp)*r, cos(thetTemp)*r,'k') 
+%     %     scatter(  FEA(1).xyz( FEA(1).sideInds,2), FEA(1).xyz( FEA(1).sideInds,3),30,'filled','r') 
+%         scatter( FEA(1).xyz( FEA(1).topInds,2), FEA(1).xyz( FEA(1).topInds,3),30,'filled','b')
+%         shading faceted
+%         axis tight;  axis off; axis equal
+%         xlabel('x');ylabel('y');%zlabel('z')
+% %         view(60,15)
 
 
 
@@ -212,10 +213,10 @@ left = (papersize(1)- width)/2;
 bottom = (papersize(2)- height)/2;
 myfiguresize = [left, bottom, width, height];
 set(fig2, 'PaperPosition', myfiguresize);
-print(fig2, ['figs' filesep 'Figure2_crossSection' ], '-dpng', '-r600');
+print(fig2, ['figs' filesep 'figureA3_crossSection3000' ], '-dpng', '-r600');
 stupid_ratio = 15/16;
 myfiguresize = [left, bottom, width*stupid_ratio, height*stupid_ratio];
 set(fig2, 'PaperPosition', myfiguresize);
-print(fig2, ['figs' filesep 'Figure2_crossSection'], '-dsvg', '-r600');
+print(fig2, ['figs' filesep 'figureA3_crossSection3000'], '-dsvg', '-r600');
         
 % 

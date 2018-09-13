@@ -23,6 +23,8 @@
     ><g transform="translate(215,77)" style="fill:red; text-rendering:geometricPrecision; color-rendering:optimizeQuality; image-rendering:optimizeQuality; color-interpolation:linearRGB; stroke:red;"
     ><circle r="3.6515" style="stroke:none;" cx="0" cy="0"
       /><circle r="3.6515" style="stroke:none;" cx="0" transform="translate(-70,0)" cy="0"
+      /><circle transform="translate(-35,-35)" style="fill:blue; stroke:none;" r="3.6515" cx="0" cy="0"
+      /><circle transform="translate(-35,35)" style="fill:blue; stroke:none;" r="3.6515" cx="0" cy="0"
     /></g
     ><g style="fill:rgb(254,254,190); text-rendering:optimizeSpeed; color-rendering:optimizeSpeed; image-rendering:optimizeSpeed; shape-rendering:crispEdges; stroke:rgb(254,254,190); color-interpolation:sRGB;"
     ><path style="stroke:none;" d="M110 202 L110 342 L250 342 L250 202 Z"
@@ -31,9 +33,11 @@
     ><path d="M250 342 L110 342 L110 202 L250 202 L250 342" style="fill:none; fill-rule:evenodd;"
       /><path style="fill:none; stroke-width:0.9333; fill-rule:evenodd; stroke-linecap:butt; stroke-linejoin:round;" d="M180 237 L184.4757 237.2874 L188.8779 238.1447 L193.1343 239.5579 L197.1751 241.5038 L200.9339 243.9505 L204.3489 246.8578 L207.3641 250.1779 L209.93 253.8563 L212.0044 257.8326 L213.5534 262.0415 L214.5514 266.414 L214.982 270.8782 L214.8383 275.3608 L214.1225 279.7882 L212.8464 284.0878 L211.031 288.1888 L208.706 292.0241 L205.9097 295.5305 L202.688 298.6506 L199.0937 301.3331 L195.1859 303.5339 L191.0288 305.2169 L186.6906 306.3546 L182.2425 306.9281 L177.7575 306.9281 L173.3094 306.3546 L168.9712 305.2169 L164.8141 303.5339 L160.9063 301.3331 L157.312 298.6506 L154.0903 295.5305 L151.294 292.0241 L148.969 288.1888 L147.1536 284.0878 L145.8775 279.7882 L145.1617 275.3608 L145.018 270.8782 L145.4486 266.414 L146.4466 262.0415 L147.9956 257.8326 L150.07 253.8563 L152.6359 250.1779 L155.6511 246.8578 L159.0661 243.9505 L162.8249 241.5038 L166.8657 239.5579 L171.1221 238.1447 L175.5243 237.2874 L180 237"
     /></g
-    ><g transform="translate(180,237)" style="fill:blue; text-rendering:geometricPrecision; color-rendering:optimizeQuality; image-rendering:optimizeQuality; color-interpolation:linearRGB; stroke:blue;"
+    ><g transform="translate(215,272)" style="fill:red; text-rendering:geometricPrecision; color-rendering:optimizeQuality; image-rendering:optimizeQuality; color-interpolation:linearRGB; stroke:red;"
     ><circle r="3.6515" style="stroke:none;" cx="0" cy="0"
-      /><circle r="3.6515" style="stroke:none;" cx="0" transform="translate(0,70)" cy="0"
+      /><circle r="3.6515" style="stroke:none;" cx="0" transform="translate(-70,0)" cy="0"
+      /><circle transform="translate(-35,-35)" style="fill:blue; stroke:none;" r="3.6515" cx="0" cy="0"
+      /><circle transform="translate(-35,35)" style="fill:blue; stroke:none;" r="3.6515" cx="0" cy="0"
     /></g
   ></g
 ></svg
