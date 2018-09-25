@@ -146,7 +146,8 @@ fig2 = figure();
 
 % subplot 311, rotation around x 
 xc = 0; yc = 0; zc = 0;
-xr = 300; yr = 300;zr = 946; 
+% xr = 300; yr = 300;zr = 946; 
+xr = 440; yr = 440; zr = 440; 
 [z,y,x] = ellipsoid(zc,yc,xc,zr,yr,xr,n);
 
 angles = [0,0.3,0];
@@ -166,7 +167,8 @@ end
 Cb = zeros(size(Xb));
 
 Imax = 155;
-[z,y,x] = ellipsoid(0,0,0,948,300,300,16);
+% [z,y,x] = ellipsoid(0,0,0,948,300,300,16);
+[z,y,x] = ellipsoid(0,0,0,440,440,440,16);
 
 C = zeros(size(x));
 
@@ -177,18 +179,20 @@ subplot(311); hold on
         set(s2,surfParamForeground{:})
     s1 = surf(x+4800,y,z,C);
         set(s1,surfParamBackground{:})
-    s3 = surf( xOm10 +4800+ FEA(2).diffPerPoint(Imax,1)*deform_mult ,...
-                yOm10+ FEA(2).diffPerPoint(Imax,2)*deform_mult,...
-                zOm10+ FEA(2).diffPerPoint(Imax,3)*deform_mult,...
+    s3 = surf( xOm10 +4800+ FEA(2).diffPerPoint(Imax,1)*1.1*deform_mult ,...
+                yOm10+ FEA(2).diffPerPoint(Imax,2)*1.1*deform_mult,...
+                zOm10+ FEA(2).diffPerPoint(Imax,3)*1.1*deform_mult,...
                 C);
         set(s3,surfParamForeground{:})
 
         shading faceted
         axis tight;  axis off; axis equal
         xlabel('x');ylabel('y');zlabel('z')
-        view(40,17)
+%         view(40,17)
+        view(45,30)
         
-angles = [0,0,0.1];
+        
+angles = [0,0,0.45];
 eul_1 = euler_angle('X',angles(1))^-1;
 eul_2 = euler_angle('Y',angles(2))^-1;
 eul_3 = euler_angle('Z',angles(3))^-1;
@@ -204,15 +208,16 @@ for j = 1:size(x,1)
 end
 
 
-[z,y,x] = ellipsoid(0,0,0,948,300,300,16);
+% [z,y,x] = ellipsoid(0,0,0,948,300,300,16);
+[z,y,x] = ellipsoid(0,0,0,440,440,440,16);
 subplot(312); hold on 
 	sb = surf(Xb,Yb,Zb,Cb);
         set(sb,surfParamBackground{:})
     s2 = surf(XjDiff,YjDiff,ZjDiff,CjDiff);
         set(s2,surfParamForeground{:})
-    s1 = surf(x+4800,y,z,C);
+    s1 = surf(x+5000,y,z,C);
         set(s1,surfParamBackground{:})
-    s3 = surf( xOMdiff +4800+ totDiff(Imax ,1)*1.1 *OOP_mult ,...
+    s3 = surf( xOMdiff +5000+ totDiff(Imax ,1)*1.1 *OOP_mult ,...
             yOMdiff+ totDiff(Imax ,2)*1.1*OOP_mult,...
             zOMdiff+ totDiff(Imax ,3)*1.1*OOP_mult,...
             C);
@@ -220,7 +225,9 @@ subplot(312); hold on
         shading faceted
         axis tight;  axis off; axis equal
         xlabel('x');ylabel('y');zlabel('z')
-        view(40,17)
+%         view(40,17)
+        view(45,30)
+        
         
 %twist 
 angles = [0.8,0,0];
@@ -253,20 +260,21 @@ for j = 1:size(Xb,1)
     end
 end
 
-Ctwist = ones(size(Cb));
+Ctwist = ones(size(Cb))*150;
 Ctwist(1,1) = -1.5;
 Ctwist(1,2) = 1.5;
-[z,y,x] = ellipsoid(0,0,0,948,300,300,16);
+% [z,y,x] = ellipsoid(0,0,0,948,300,300,16);
+[z,y,x] = ellipsoid(0,0,0,440,440,440,16);
 
 subplot(313); hold on   
 %     plot stalks 
-	sb = surf(Xb,Yb,Zb,Cb);
-        set(sb,surfParamBackgroundTwistStalk{:})
+% 	sb = surf(Xb,Yb,Zb,Cb);
+%         set(sb,surfParamBackgroundTwistStalk{:})
     s2 = surf(Xtwist,Ytwist,Ztwist,Cb);
         set(s2,surfParamForeground{:})
         colormap(strainScheme)%     colorbar
-    s1 = surf(x+4800,y,z,C);
-        set(s1,surfParamBackgroundTwist{:})
+%     s1 = surf(x+4800,y,z,C);
+%         set(s1,surfParamBackgroundTwist{:})
     s3 = surf( xOMdiff +4800 ,...
             yOMdiff,...
             zOMdiff,...
@@ -276,7 +284,8 @@ subplot(313); hold on
         shading faceted
         axis tight;  axis off; axis equal
         xlabel('x');ylabel('y');zlabel('z')
-        view(40,17)
+%         view(40,17)
+        view(45,30)
         
 %% Setting paper size for saving 
 
