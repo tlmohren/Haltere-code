@@ -32,12 +32,33 @@ surfParamForeground = {'FaceAlpha',1,'EdgeAlpha',0.4};
 
 % used indices for plotting 
 % It = 1:160;
-len = 151;
+len = 101;
 start = 35;
 It = start:(start+len-1);
 t_plot = (0:len-1)*0.001;
 
-axOpts = {'XGrid','On','XLim',[0,t_plot(end)],'XTick',[0:0.05:0.15]}; 
-axOptsNoT = {'XGrid','On','XLim',[0,t_plot(end)],'XTick',[0:0.05:0.15],'XTickLabel',{'','','',''} }; 
+% axOpts = {'XGrid','On','XLim',[0,t_plot(end)],'XTick',[0:0.05:0.15]}; 
+% axOptsNoT = {'XGrid','On','XLim',[0,t_plot(end)],'XTick',[0:0.05:0.15],'XTickLabel',{'','','',''} }; 
 
 % t = 0:0.001:0.35;
+
+deformLabels = {'$\Delta \phi$','$\Delta \theta$','$\Delta \gamma$'};
+        
+
+% axOpts_dphi= {'XGrid','On','XLim',[0,t_plot(end)],'XTick',[0:0.05:0.10],'XTickLabel',{'','','',''} ,...
+%                'YLim',[-1,1]*0.005}; 
+% axOpts_dtheta= {'XGrid','On','XLim',[0,t_plot(end)],'XTick',[0:0.05:0.10],'XTickLabel',{'','','',''} ,...
+%                'YLim',[-1,1]*2e-4}; 
+% axOpts_dgamma= {'XGrid','On','XLim',[0,t_plot(end)],'XTick',[0:0.05:0.10] ,...
+%                'YLim',[-1,1]*2e-6};           
+           
+           
+axOpts_dphi= {'XGrid','On','XLim',[0,t_plot(end)],'XTick',[0:0.05:0.15],'XTickLabel',{'','','',''} ,...
+               'YLim',[-1,1]*0.005}; 
+axOpts_dtheta= {'XGrid','On','XLim',[0,t_plot(end)],'XTick',[0:0.05:0.15],'XTickLabel',{'','','',''} ,...
+               'YLim',[-1,1]*2e-4}; 
+axOpts_dgamma= {'XGrid','On','XLim',[0,t_plot(end)],'XTick',[0:0.05:0.15] ,...
+               'YLim',[-1,1]*3e-6}; 
+           
+           
+           

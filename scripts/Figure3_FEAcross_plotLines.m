@@ -4,16 +4,14 @@ addpathFolderStructureHaltere()
 run('config_file.m')
 
 %%
-loadName = 'figure5_deform';
-saveName = 'figure5_deform';
+loadName = 'figure3_crossDeform';
+saveName = 'figure3_crossDeform';
 
 renew_data_load = false
 % renew_data_load = true
 if renew_data_load
-%     FEA(1).name = 'Haltere_CraneFly_ellipsoidVerCrossStalk_Om0';
-%     FEA(2).name = 'Haltere_CraneFly_ellipsoidVerCrossStalk_Om10';
-    FEA(1).name = 'Haltere_CraneFly_sphereCrossStalk_Om0';
-    FEA(2).name = 'Haltere_CraneFly_sphereCrossStalk_Om10';
+    FEA(1).name = 'Haltere_CraneFlyLowDensity_sphereCrossStalk_Om0';
+    FEA(2).name = 'Haltere_CraneFlyLowDensity_sphereCrossStalk_Om10';
     for j =  1:length(FEA)
         tic
         [FEA(j).xyz, FEA(j).deform, ~] = loadCSV( ['data' filesep  FEA(j).name], { 'u2','v2','w2'});
@@ -81,12 +79,14 @@ It = start:(start+len-1);
 t_plot = (0:len-1)*0.001;
 
 
-axOpts_dphi= {'XGrid','On','XLim',[0,t_plot(end)],'XTick',[0:0.05:t_plot(end)],'XTickLabel',{'','',''} ,...
-               'YLim',[-0.02,0.02]}; 
-axOpts_dtheta= {'XGrid','On','XLim',[0,t_plot(end)],'XTick',[0:0.05:t_plot(end)],'XTickLabel',{'','',''} ,...
-               'YLim',[-1,1]*1e-3}; 
+% axOpts_dphi= {'XGrid','On','XLim',[0,t_plot(end)],'XTick',[0:0.05:t_plot(end)],'XTickLabel',{'','',''} ,...
+%                'YLim',[-0.02,0.02]}; 
+% axOpts_dtheta= {'XGrid','On','XLim',[0,t_plot(end)],'XTick',[0:0.05:t_plot(end)],'XTickLabel',{'','',''} ,...
+%                'YLim',[-1,1]*1e-3}; 
 axOpts_dgamma= {'XGrid','On','XLim',[0,t_plot(end)],'XTick',[0:0.05:t_plot(end)] ,...
-               'YLim',[-1,1]*5e-4}; 
+               'YLim',[-1,1]*5e-5}; 
+% axOpts_dgamma= {'XGrid','On','XLim',[0,t_plot(end)],'XTick',[0:0.05:t_plot(end)] ,...
+%                'YLim',[-1,1]*1e-4}; 
            
 for k = 1
     for j = [1,2]

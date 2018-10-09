@@ -4,29 +4,25 @@ addpathFolderStructureHaltere()
 run('config_file.m')
 
 %%
-loadName = 'figure3_deform';
-saveName = 'figure3_deform';
+loadName = 'figure2_bulbGeometry';
+saveName = 'figure2_bulbGeometry';
 
 % renew_data_load = true
 renew_data_load = false
 if renew_data_load
-    FEA(1).name = 'Haltere_CraneFly_Sphere_Om0';
-    FEA(2).name = 'Haltere_CraneFly_Sphere_Om10';
-    FEA(3).name = 'Haltere_CraneFly_ellipsoidHor_Om0';
-    FEA(4).name = 'Haltere_CraneFly_ellipsoidHor_Om10';
-    FEA(5).name = 'Haltere_CraneFly_ellipsoidVer_Om0';
-    FEA(6).name = 'Haltere_CraneFly_ellipsoidVer_Om10';   
-    FEA(7).name = 'Haltere_CraneFly_SphereVerOffset_Om0';
-    FEA(8).name = 'Haltere_CraneFly_SphereVerOffset_Om10';
-    FEA(9).name = 'Haltere_CraneFly_ellipsoidVerOffset_Om0';
-    FEA(10).name = 'Haltere_CraneFly_ellipsoidVerOffset_Om10';   
-    FEA(11).name = 'Haltere_CraneFly_ellipsoidHorOffset_Om0';
-    FEA(12).name = 'Haltere_CraneFly_ellipsoidHorOffset_Om10';
-    FEA(13).name = 'Haltere_CraneFly_ellipsoidVerCrossStalk_Om0';
-    FEA(14).name = 'Haltere_CraneFly_ellipsoidVerCrossStalk_Om10';
-    
-    
-    
+    FEA(1).name = 'Haltere_CraneFlyLowDensity_Sphere_Om0';
+    FEA(2).name = 'Haltere_CraneFlyLowDensity_Sphere_Om10';
+    FEA(3).name = 'Haltere_CraneFlyLowDensity_ellipsoidHor_Om0';
+    FEA(4).name = 'Haltere_CraneFlyLowDensity_ellipsoidHor_Om10';
+    FEA(5).name = 'Haltere_CraneFlyLowDensity_ellipsoidVer_Om0';
+    FEA(6).name = 'Haltere_CraneFlyLowDensity_ellipsoidVer_Om10';   
+    FEA(7).name = 'Haltere_CraneFlyLowDensity_SphereVerOffset_Om0';
+    FEA(8).name = 'Haltere_CraneFlyLowDensity_SphereVerOffset_Om10';
+    FEA(9).name = 'Haltere_CraneFlyLowDensity_ellipsoidVerOffset_Om0';
+    FEA(10).name = 'Haltere_CraneFlyLowDensity_ellipsoidVerOffset_Om10';   
+    FEA(11).name = 'Haltere_CraneFlyLowDensity_ellipsoidHorOffset_Om0';
+    FEA(12).name = 'Haltere_CraneFlyLowDensity_ellipsoidHorOffset_Om10';
+
     for j =  1:length(FEA)
         tic
         [~, FEA(j).strain, ~] = loadCSV( ['data' filesep  FEA(j).name], { 'eXX' });
@@ -84,45 +80,37 @@ fig1 = figure();
     set(fig1, 'Position', [fig1.Position(1:2)-[width*100,0] width*100, height*100]); %<- Set size
 
 
-deformLabels = {'$\Delta \phi$','$\Delta \theta$','$\Delta \gamma$'};
 legend_entries = {'ellipsoid hor', 'ellipsoid ver' };
 len = 101;
 start = 35;
 It = start:(start+len-1);
 t_plot = (0:len-1)*0.001;
 
-
-axOpts_dphi= {'XGrid','On','XLim',[0,t_plot(end)],'XTick',[0:0.05:t_plot(end)],'XTickLabel',{'','',''} ,...
-               'YLim',[-0.02,0.02]}; 
-axOpts_dtheta= {'XGrid','On','XLim',[0,t_plot(end)],'XTick',[0:0.05:t_plot(end)],'XTickLabel',{'','',''} ,...
-               'YLim',[-1,1]*1e-3}; 
 axOpts_dgamma= {'XGrid','On','XLim',[0,t_plot(end)],'XTick',[0:0.05:t_plot(end)] ,...
-               'YLim',[-1,1]*7e-5}; 
-           
+               'YLim',[-1,1]*1e-5};   
+lineCols = linspecer(3); 
 for k = 1:3
     for j = [1,2]
         jk = 2*(k-1)+j;
         subplot(3,2, j ); hold on 
-            p1 = plot( t_plot, FEA(jk).yAngle(It) );
+            p1 = plot( t_plot, FEA(jk).yAngle(It)  ,'color',lineCols(k,:) );
             ylabel( deformLabels{1} );
             ax = gca();
             set(ax,axOpts_dphi{:})
 
         subplot(3,2, j+2 ); hold on 
-            p1 = plot( t_plot, FEA(jk).zAngle(It) );
+            p1 = plot( t_plot, FEA(jk).zAngle(It) ,'color',lineCols(k,:) );
             ylabel( deformLabels{2} );
             ax = gca();
             set(ax,axOpts_dtheta{:})
 
         subplot(3,2, j+4 ); hold on 
-            p1 = plot( t_plot, FEA(jk).twistAngle(It) );
+            p1 = plot( t_plot, FEA(jk).twistAngle(It)  ,'color',lineCols(k,:) );
             xlabel('Time (s)'); ylabel( deformLabels{3} );
             ax = gca();
             set(ax,axOpts_dgamma{:})
     end
 end
-
-
 
 %% Setting paper size for saving 
 set(gca, 'LooseInset', get(gca(), 'TightInset')); % remove whitespace around figure
@@ -145,7 +133,7 @@ fig2 = figure();
     height = 3;    % Height in inches
     set(fig2, 'Position', [fig2.Position(1:2) width*100, height*100]); %<- Set size
 
-deformLabels = {'$\Delta \phi$','$\Delta \theta$','$\Delta \gamma$'};
+% deformLabels = {'$\Delta \phi$','$\Delta \theta$','$\Delta \gamma$'};
 legend_entries = {'ellipsoid hor', 'ellipsoid ver' };
 len = 101;
 start = 35;
@@ -153,30 +141,26 @@ It = start:(start+len-1);
 t_plot = (0:len-1)*0.001;
 
 
-axOpts_dphi= {'XGrid','On','XLim',[0,t_plot(end)],'XTick',[0:0.05:t_plot(end)],'XTickLabel',{'','',''} ,...
-               'YLim',[-0.02,0.02]}; 
-axOpts_dtheta= {'XGrid','On','XLim',[0,t_plot(end)],'XTick',[0:0.05:t_plot(end)],'XTickLabel',{'','',''} ,...
-               'YLim',[-1,1]*1e-3}; 
 axOpts_dgamma= {'XGrid','On','XLim',[0,t_plot(end)],'XTick',[0:0.05:t_plot(end)] ,...
-               'YLim',[-1,1]*1e-3}; 
+               'YLim',[-1,1]*3e-5};   
            
 for k = 4:6
     for j = [1,2]
-        jk = 2*(k-1)+j
+        jk = 2*(k-1)+j;
         subplot(3,2, j ); hold on 
-            p1 = plot( t_plot, FEA(jk).yAngle(It) );
+            p1 = plot( t_plot, FEA(jk).yAngle(It)  ,'color',lineCols(k-3,:) );
             ylabel( deformLabels{1} );
             ax = gca();
             set(ax,axOpts_dphi{:})
 
         subplot(3,2, j+2 ); hold on 
-            p1 = plot( t_plot, FEA(jk).zAngle(It) );
+            p1 = plot( t_plot, FEA(jk).zAngle(It) ,'color',lineCols(k-3,:) );
             ylabel( deformLabels{2} );
             ax = gca();
             set(ax,axOpts_dtheta{:})
 
         subplot(3,2, j+4 ); hold on 
-            p1 = plot( t_plot, FEA(jk).twistAngle(It) );
+            p1 = plot( t_plot, FEA(jk).twistAngle(It)  ,'color',lineCols(k-3,:) );
             xlabel('Time (s)'); ylabel( deformLabels{3} );
             ax = gca();
             set(ax,axOpts_dgamma{:})
@@ -199,45 +183,32 @@ myfiguresize = [left, bottom, width*stupid_ratio, height*stupid_ratio];
 set(fig1, 'PaperPosition', myfiguresize);
 print(fig2, ['figs' filesep 'Figure3_deformOffset'], '-dsvg', '-r600');
 
-
 %% deformation in angles 
 fig3 = figure();
     width = 3;     % Width in inches,   find column width in paper 
     height = 3;    % Height in inches
     set(fig3, 'Position', [fig3.Position(1:2) width*100, height*100]); %<- Set size
 
-deformLabels = {'$\Delta \phi$','$\Delta \theta$','$\Delta \gamma$'};
-legend_entries = {'ellipsoid hor', 'ellipsoid ver' };
-len = 101;
-start = 35;
-It = start:(start+len-1);
-t_plot = (0:len-1)*0.001;
-
-
-axOpts_dphi= {'XGrid','On','XLim',[0,t_plot(end)],'XTick',[0:0.05:t_plot(end)],'XTickLabel',{'','',''} ,...
-               'YLim',[-0.02,0.02]}; 
-axOpts_dtheta= {'XGrid','On','XLim',[0,t_plot(end)],'XTick',[0:0.05:t_plot(end)],'XTickLabel',{'','',''} ,...
-               'YLim',[-1,1]*1e-3}; 
 axOpts_dgamma= {'XGrid','On','XLim',[0,t_plot(end)],'XTick',[0:0.05:t_plot(end)] ,...
-               'YLim',[-1,1]*7e-5}; 
-           
+               'YLim',[-1,1]*5e-4};   
+
 for k = 4:6
     for j = [1,2]
-        jk = 2*(k-1)+j
+        jk = 2*(k-1)+j;
         subplot(3,2, j ); hold on 
-            p1 = plot( t_plot, FEA(jk).yAngle(It) );
+            p1 = plot( t_plot, FEA(jk).yAngle(It)  ,'color',lineCols(k-3,:) );
             ylabel( deformLabels{1} );
             ax = gca();
             set(ax,axOpts_dphi{:})
 
         subplot(3,2, j+2 ); hold on 
-            p1 = plot( t_plot, FEA(jk).zAngle(It) );
+            p1 = plot( t_plot, FEA(jk).zAngle(It) ,'color',lineCols(k-3,:) );
             ylabel( deformLabels{2} );
             ax = gca();
             set(ax,axOpts_dtheta{:})
 
         subplot(3,2, j+4 ); hold on 
-            p1 = plot( t_plot, FEA(jk).twistAngle(It) );
+            p1 = plot( t_plot, FEA(jk).twistAngle(It)  ,'color',lineCols(k-3,:) );
             xlabel('Time (s)'); ylabel( deformLabels{3} );
             ax = gca();
             set(ax,axOpts_dgamma{:})
@@ -259,66 +230,3 @@ stupid_ratio = 15/16;
 myfiguresize = [left, bottom, width*stupid_ratio, height*stupid_ratio];
 set(fig1, 'PaperPosition', myfiguresize);
 print(fig3, ['figs' filesep 'Figure3_deformOffsetZoom'], '-dsvg', '-r600');
-
-
-
-%% deformation in angles 
-fig4 = figure();
-    width = 3;     % Width in inches,   find column width in paper 
-    height = 3;    % Height in inches
-    set(fig4, 'Position', [fig4.Position(1:2) width*100, height*100]); %<- Set size
-
-deformLabels = {'$\Delta \phi$','$\Delta \theta$','$\Delta \gamma$'};
-legend_entries = {'ellipsoid hor', 'ellipsoid ver' };
-len = 101;
-start = 35;
-It = start:(start+len-1);
-t_plot = (0:len-1)*0.001;
-
-
-axOpts_dphi= {'XGrid','On','XLim',[0,t_plot(end)],'XTick',[0:0.05:t_plot(end)],'XTickLabel',{'','',''} ,...
-               'YLim',[-0.02,0.02]}; 
-axOpts_dtheta= {'XGrid','On','XLim',[0,t_plot(end)],'XTick',[0:0.05:t_plot(end)],'XTickLabel',{'','',''} ,...
-               'YLim',[-1,1]*1e-3}; 
-axOpts_dgamma= {'XGrid','On','XLim',[0,t_plot(end)],'XTick',[0:0.05:t_plot(end)] ,...
-               'YLim',[-1,1]*1e-3}; 
-           
-for k = 7
-    for j = [1,2]
-        jk = 2*(k-1)+j
-        subplot(3,2, j ); hold on 
-            p1 = plot( t_plot, FEA(jk).yAngle(It) );
-            ylabel( deformLabels{1} );
-            ax = gca();
-            set(ax,axOpts_dphi{:})
-
-        subplot(3,2, j+2 ); hold on 
-            p1 = plot( t_plot, FEA(jk).zAngle(It) );
-            ylabel( deformLabels{2} );
-            ax = gca();
-            set(ax,axOpts_dtheta{:})
-
-        subplot(3,2, j+4 ); hold on 
-            p1 = plot( t_plot, FEA(jk).twistAngle(It) );
-            xlabel('Time (s)'); ylabel( deformLabels{3} );
-            ax = gca();
-            set(ax,axOpts_dgamma{:})
-    end
-end
-
-%% Setting paper size for saving 
-set(gca, 'LooseInset', get(gca(), 'TightInset')); % remove whitespace around figure
-set(fig4,'InvertHardcopy','on');
-set(fig4,'PaperUnits', 'inches');
-papersize = get(fig4, 'PaperSize');
-left = (papersize(1)- width)/2;
-bottom = (papersize(2)- height)/2;
-myfiguresize = [left, bottom, width, height];
-set(fig4, 'PaperPosition', myfiguresize);
-
-print(fig4, ['figs' filesep 'Figure3_deformCross' ], '-dpng', '-r600');
-stupid_ratio = 15/16;
-myfiguresize = [left, bottom, width*stupid_ratio, height*stupid_ratio];
-set(fig1, 'PaperPosition', myfiguresize);
-print(fig4, ['figs' filesep 'Figure3_deformCross'], '-dsvg', '-r600');
-

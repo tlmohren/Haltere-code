@@ -12,10 +12,12 @@ renew_data_load = false
 if renew_data_load
     FEA(1).name = 'Haltere_CraneFly_Sphere_Om0';
     FEA(2).name = 'Haltere_CraneFly_Sphere_Om10';
-    FEA(3).name = 'Haltere_CraneFly_ellipsoidHor_Om0';
-    FEA(4).name = 'Haltere_CraneFly_ellipsoidHor_Om10';
-    FEA(5).name = 'Haltere_CraneFly_ellipsoidVer_Om0';
-    FEA(6).name = 'Haltere_CraneFly_ellipsoidVer_Om10';   
+%     FEA(1).name = 'Haltere_CraneFlyLowDensity_Sphere_Om0';
+%     FEA(2).name = 'Haltere_CraneFlyLowDensity_Sphere_Om10';
+%     FEA(3).name = 'Haltere_CraneFly_ellipsoidHor_Om0';
+%     FEA(4).name = 'Haltere_CraneFly_ellipsoidHor_Om10';
+%     FEA(5).name = 'Haltere_CraneFly_ellipsoidVer_Om0';
+%     FEA(6).name = 'Haltere_CraneFly_ellipsoidVer_Om10';   
     for j =  1:length(FEA)
         tic
         [~, FEA(j).strain, ~] = loadCSV( ['data' filesep  FEA(j).name], { 'eXX' });
@@ -68,8 +70,8 @@ end
 
 %% 
 t_ind = 100;
-deform_mult = 40;
-OOP_mult = -600;
+deform_mult = 200;
+OOP_mult = -3000;
 xDes = [0:150:4800];
 
 FEA(1).xrtheta(:,1) = FEA(1).xyz(:,1);

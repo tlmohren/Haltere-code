@@ -7,11 +7,13 @@ run('config_file.m')
 loadName = 'figure5_deform';
 saveName = 'figure5_deform';
 
-renew_data_load = false
-% renew_data_load = true
+% renew_data_load = false
+renew_data_load = true
 if renew_data_load
-    FEA(1).name = 'Haltere_CraneFly_ellipsoidVerCrossStalk_Om0';
-    FEA(2).name = 'Haltere_CraneFly_ellipsoidVerCrossStalk_Om10';
+%     FEA(1).name = 'Haltere_CraneFly_ellipsoidVerCrossStalk_Om0';
+%     FEA(2).name = 'Haltere_CraneFly_ellipsoidVerCrossStalk_Om10';
+    FEA(1).name = 'Haltere_CraneFlyLowDensity_sphereCrossStalk_Om0';
+    FEA(2).name = 'Haltere_CraneFlyLowDensity_sphereCrossStalk_Om10';
     for j =  1:length(FEA)
         tic
         [FEA(j).xyz, FEA(j).deform, ~] = loadCSV( ['data' filesep  FEA(j).name], { 'u2','v2','w2'});
@@ -136,7 +138,8 @@ fig1 = figure();
 % 
 % % subplot 311, rotation around x 
 xc = 0; yc = 0; zc = 0;
-xr = 440; yr = 440;zr = 440; 
+% xr = 440; yr = 440;zr = 440; 
+xr = 500; yr = 500;zr = 500; 
 [z,y,x] = ellipsoid(zc,yc,xc,zr,yr,xr,n);
 % 
 Cb = zeros(size(Xback));

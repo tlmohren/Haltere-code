@@ -76,9 +76,9 @@
     /></g
     ><g transform="translate(53.1107,179.5)" style="fill:red; text-rendering:geometricPrecision; color-rendering:optimizeQuality; image-rendering:optimizeQuality; color-interpolation:linearRGB; stroke:red;"
     ><circle r="3.6515" style="stroke:none;" cx="0" cy="0"
-      /><circle transform="translate(133.8893,133.8893)" style="fill:blue; stroke:none;" r="3.6515" cx="0" cy="0"
-      /><circle transform="translate(133.8893,-133.8893)" style="fill:blue; stroke:none;" r="3.6515" cx="0" cy="0"
       /><circle r="3.6515" style="stroke:none;" cx="0" transform="translate(267.7785,0)" cy="0"
+      /><circle transform="translate(133.8893,-133.8893)" style="fill:blue; stroke:none;" r="3.6515" cx="0" cy="0"
+      /><circle transform="translate(133.8893,133.8893)" style="fill:blue; stroke:none;" r="3.6515" cx="0" cy="0"
     /></g
   ></g
 ></svg

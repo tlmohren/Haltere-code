@@ -8,13 +8,10 @@ loadName = 'figure1_deform';
 saveName = 'figure1_deform';
 
 renew_data_load = false
+% renew_data_load = true
 if renew_data_load
-    FEA(1).name = 'Haltere_CraneFly_Sphere_Om0';
-    FEA(2).name = 'Haltere_CraneFly_Sphere_Om10';
-    FEA(3).name = 'Haltere_CraneFly_ellipsoidHor_Om0';
-    FEA(4).name = 'Haltere_CraneFly_ellipsoidHor_Om10';
-    FEA(5).name = 'Haltere_CraneFly_ellipsoidVer_Om0';
-    FEA(6).name = 'Haltere_CraneFly_ellipsoidVer_Om10';   
+    FEA(1).name = 'Haltere_CraneFlyLowDensity_Sphere_Om0';
+    FEA(2).name = 'Haltere_CraneFlyLowDensity_Sphere_Om10';
     for j =  1:length(FEA)
         tic
         [~, FEA(j).strain, ~] = loadCSV( ['data' filesep  FEA(j).name], { 'eXX' });
@@ -22,18 +19,18 @@ if renew_data_load
         [~, FEA(j).angles, ~] = loadCSV( ['data' filesep  FEA(j).name], { 'flapangle','theta_angle'});
         toc 
     end
-    % Determine Circle locations
+    
+    er = 0.01;
     for j = 1:length(FEA)
-        circleDistance = 3000;               % distance from base to haltere 
-        circleRadius = 150;                 % radius of haltere   
-        mindist =  min( abs( FEA(j).xyz(:,1) - circleDistance) );
-        xMatch = find(  abs(FEA(j).xyz(:,1) - circleDistance) <= (mindist+1) );
-        yMatch = find( round( abs( FEA(j).xyz(:,2) ), 7) == circleRadius );
-        zMatch = find( round( abs( FEA(j).xyz(:,3) ), 7) == circleRadius );
-
-        FEA(j).sideInds = intersect(xMatch,yMatch);
-        FEA(j).topInds = intersect(xMatch,zMatch);
+        xMatch = find(   abs(abs( FEA(j).xyz(:,1) ) - circleDistance)  <er );
+        yMatch = find(   abs(abs( FEA(j).xyz(:,2) ) - circleRadius) <er & ...
+                     abs( FEA(j).xyz(:,3) )   <er);
+        zMatch = find(   abs(abs( FEA(j).xyz(:,3) ) - circleRadius)  <er & ...
+                     abs( FEA(j).xyz(:,2) )   <er);
+        FEA(j).sideInds2 = intersect(xMatch,yMatch);
+        FEA(j).topInds2 = intersect(xMatch,zMatch);
     end
+       
     % Transpose deformation to haltere frame 
     for j = 1:length(FEA)
         tic
@@ -71,18 +68,17 @@ fig1 = figure();
     height = 3;    % Height in inches
     set(fig1, 'Position', [fig1.Position(1:2) width*100, height*100]); %<- Set size
 
-deformLabels = {'$\Delta \phi$','$\Delta \theta$','$\Delta \gamma$'};
-        
-axOpts_dphi= {'XGrid','On','XLim',[0,t_plot(end)],'XTick',[0:0.05:0.15],'XTickLabel',{'','','',''} ,...
-               'YLim',[-0.02,0.02]}; 
-axOpts_dtheta= {'XGrid','On','XLim',[0,t_plot(end)],'XTick',[0:0.05:0.15],'XTickLabel',{'','','',''} ,...
-               'YLim',[-1,1]*1e-3}; 
-axOpts_dgamma= {'XGrid','On','XLim',[0,t_plot(end)],'XTick',[0:0.05:0.15] ,...
-               'YLim',[-1,1]*5e-5}; 
-           
-legend_entries = {'sphere','ellipsoid hor','ellipsoid ver'};
+    
+len = 151;
+start = 35;
+It = start:(start+len-1);
+t_plot = (0:len-1)*0.001;
 
-for j = [1,3,5]
+axOpts_dphi{4} = [0,0.15];
+axOpts_dtheta{4} = [0,0.15];
+axOpts_dgamma{4} = [0,0.15];
+
+for j = 1%[1,3,5]
     subplot(3,1,1); hold on 
         p1 = plot( t_plot, FEA(j).yAngle(It) );
         ylabel( deformLabels{1} );
@@ -101,9 +97,6 @@ for j = [1,3,5]
         ax = gca();
         set(ax,axOpts_dgamma{:})
 end
-    subplot(311)
-        legend(legend_entries{:})
-
 %% Setting paper size for saving 
 set(gca, 'LooseInset', get(gca(), 'TightInset')); % remove whitespace around figure
 tightfig;
@@ -127,15 +120,7 @@ fig2 = figure();
     set(fig2, 'Position', [fig2.Position(1:2)+[width*100,0] width*100, height*100]); %<- Set size
     colormap(strainScheme)%     colorbar
         
-axOpts_dphi= {'XGrid','On','XLim',[0,t_plot(end)],'XTick',[0:0.05:0.15],'XTickLabel',{'','','',''} ,...
-               'YLim',[-0.02,0.02]}; 
-axOpts_dtheta= {'XGrid','On','XLim',[0,t_plot(end)],'XTick',[0:0.05:0.15],'XTickLabel',{'','','',''} ,...
-               'YLim',[-1,1]*1e-3}; 
-axOpts_dgamma= {'XGrid','On','XLim',[0,t_plot(end)],'XTick',[0:0.05:0.15] ,...
-               'YLim',[-1,1]*5e-5}; 
-legend_entries = {'sphere','ellipsoid hor','ellipsoid ver'};
-
-for j = [2,4,6]
+for j = 2
     subplot(3,1,1); hold on 
         p1 = plot( t_plot, FEA(j).yAngle(It) );
         ylabel( deformLabels{1} );
@@ -154,8 +139,6 @@ for j = [2,4,6]
         ax = gca();
         set(ax,axOpts_dgamma{:})
 end
-    subplot(311)
-        legend(legend_entries{:})
 %% Setting paper size for saving 
 set(gca, 'LooseInset', get(gca(), 'TightInset')); % remove whitespace around figure
 tightfig;

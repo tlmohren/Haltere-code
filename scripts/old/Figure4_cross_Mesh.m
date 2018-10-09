@@ -4,17 +4,25 @@ addpathFolderStructureHaltere()
 run('config_file.m')
 
 %%
-loadName = 'figure2_strainData';
-saveName = 'figure2_strainData';
+% loadName = 'figure2_strainData';
+% saveName = 'figure2_strainData';
 
-renew_data_load = false
+loadName = 'figure3_crossDeform';
+saveName = 'figure3_crossDeform';
+
+% renew_data_load = false
+renew_data_load = true
 if renew_data_load
-    FEA(1).name = 'Haltere_CraneFly_Sphere_Om0';
-    FEA(2).name = 'Haltere_CraneFly_Sphere_Om10';
-    FEA(3).name = 'Haltere_CraneFly_ellipsoidHor_Om0';
-    FEA(4).name = 'Haltere_CraneFly_ellipsoidHor_Om10';
-    FEA(5).name = 'Haltere_CraneFly_ellipsoidVer_Om0';
-    FEA(6).name = 'Haltere_CraneFly_ellipsoidVer_Om10';   
+%     FEA(1).name = 'Haltere_CraneFlyLowDensity_sphereCrossStalk_Om0';
+%     FEA(2).name = 'Haltere_CraneFlyLowDensity_sphereCrossStalk_Om10';
+    FEA(1).name = 'Haltere_CraneFly_ellipsoidVerCrossStalk_Om0';
+    FEA(2).name = 'Haltere_CraneFly_ellipsoidVerCrossStalk_Om10';
+%     FEA(1).name = 'Haltere_CraneFly_Sphere_Om0';
+%     FEA(2).name = 'Haltere_CraneFly_Sphere_Om10';
+%     FEA(3).name = 'Haltere_CraneFly_ellipsoidHor_Om0';
+%     FEA(4).name = 'Haltere_CraneFly_ellipsoidHor_Om10';
+%     FEA(5).name = 'Haltere_CraneFly_ellipsoidVer_Om0';
+%     FEA(6).name = 'Haltere_CraneFly_ellipsoidVer_Om10';   
     for j =  1:length(FEA)
         tic
         [FEA(j).xyz, FEA(j).strain, ~] = loadCSV( ['data' filesep  FEA(j).name], { 'eXX' });        toc 
