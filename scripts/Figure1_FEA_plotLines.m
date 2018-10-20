@@ -7,11 +7,23 @@ run('config_file.m')
 loadName = 'figure1_deform';
 saveName = 'figure1_deform';
 
-renew_data_load = false
-% renew_data_load = true
+% renew_data_load = false
+renew_data_load = true
 if renew_data_load
     FEA(1).name = 'Haltere_CraneFlyLowDensity_Sphere_Om0';
     FEA(2).name = 'Haltere_CraneFlyLowDensity_Sphere_Om10';
+    FEA(3).name = 'Haltere_CraneFlyLowDensityt7_Sphere_Om10';
+    FEA(4).name = 'Haltere_CraneFlyLowDensityu7_Sphere_Om10';
+    FEA(6).name = 'Haltere_CraneFlyLowDensityt8u7_Sphere_Om10';
+%     FEA(4).name = 'Haltere_CraneFlyV4_Sphere_Om10';
+    FEA(5).name = 'Haltere_CraneFlyV10_Sphere_Om10';
+%     FEA(6).name = 'Haltere_CraneFlyV10_Sphere_Om10';
+    FEA(7).name = 'Haltere_CraneFlyV11_Sphere_Om10';
+    FEA(8).name = 'Haltere_CraneFlyV11_Sphere_Om10';
+    FEA(9).name = 'Haltere_CraneFlyV12_Sphere_Om10';
+    FEA(10).name = 'Haltere_CraneFlyV12_Sphere_Om10';
+    FEA(11).name = 'Haltere_CraneFlyV14_Sphere_Om10';
+    FEA(12).name = 'Haltere_CraneFlyV14_Sphere_Om10';
     for j =  1:length(FEA)
         tic
         [~, FEA(j).strain, ~] = loadCSV( ['data' filesep  FEA(j).name], { 'eXX' });
@@ -27,8 +39,8 @@ if renew_data_load
                      abs( FEA(j).xyz(:,3) )   <er);
         zMatch = find(   abs(abs( FEA(j).xyz(:,3) ) - circleRadius)  <er & ...
                      abs( FEA(j).xyz(:,2) )   <er);
-        FEA(j).sideInds2 = intersect(xMatch,yMatch);
-        FEA(j).topInds2 = intersect(xMatch,zMatch);
+        FEA(j).sideInds = intersect(xMatch,yMatch);
+        FEA(j).topInds = intersect(xMatch,zMatch);
     end
        
     % Transpose deformation to haltere frame 
@@ -69,7 +81,7 @@ fig1 = figure();
     set(fig1, 'Position', [fig1.Position(1:2) width*100, height*100]); %<- Set size
 
     
-len = 151;
+len = 101;
 start = 35;
 It = start:(start+len-1);
 t_plot = (0:len-1)*0.001;
@@ -78,7 +90,7 @@ axOpts_dphi{4} = [0,0.15];
 axOpts_dtheta{4} = [0,0.15];
 axOpts_dgamma{4} = [0,0.15];
 
-for j = 1%[1,3,5]
+for j = [2,5,6]%1:2:11%[1,3,5]
     subplot(3,1,1); hold on 
         p1 = plot( t_plot, FEA(j).yAngle(It) );
         ylabel( deformLabels{1} );
@@ -97,6 +109,7 @@ for j = 1%[1,3,5]
         ax = gca();
         set(ax,axOpts_dgamma{:})
 end
+legend( FEA([2,5,6]).name)
 %% Setting paper size for saving 
 set(gca, 'LooseInset', get(gca(), 'TightInset')); % remove whitespace around figure
 tightfig;
@@ -120,7 +133,7 @@ fig2 = figure();
     set(fig2, 'Position', [fig2.Position(1:2)+[width*100,0] width*100, height*100]); %<- Set size
     colormap(strainScheme)%     colorbar
         
-for j = 2
+for j = 2:2:14
     subplot(3,1,1); hold on 
         p1 = plot( t_plot, FEA(j).yAngle(It) );
         ylabel( deformLabels{1} );
