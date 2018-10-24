@@ -7,23 +7,27 @@ run('config_file.m')
 loadName = 'figure1_deform';
 saveName = 'figure1_deform';
 
-% renew_data_load = false
-renew_data_load = true
+renew_data_load = false
+% renew_data_load = true
 if renew_data_load
     FEA(1).name = 'Haltere_CraneFlyLowDensity_Sphere_Om0';
-    FEA(2).name = 'Haltere_CraneFlyLowDensity_Sphere_Om10';
-    FEA(3).name = 'Haltere_CraneFlyLowDensityt7_Sphere_Om10';
-    FEA(4).name = 'Haltere_CraneFlyLowDensityu7_Sphere_Om10';
-    FEA(6).name = 'Haltere_CraneFlyLowDensityt8u7_Sphere_Om10';
+    FEA(2).name = 'Haltere_CraneFlyLowDensityt8u7_Sphere_Om10';
+%     FEA(3).name = 'Haltere_CraneFlyLowDensity_ellipsoidVer_Om0';
+%     FEA(4).name = 'Haltere_CraneFlyLowDensity_ellipsoidVert8u7_Om10';
+%     FEA(6).name = 'Haltere_CraneFlyLowDensity_ellipsoidHor_Om0';
+%     FEA(5).name = 'Haltere_CraneFlyLowDensity_ellipsoidHort8u7_Om10';
+%     FEA(2).name = 'Haltere_CraneFlyLowDensity_Sphere_Om10';
+%     FEA(3).name = 'Haltere_CraneFlyLowDensityt7_Sphere_Om10';
+%     FEA(4).name = 'Haltere_CraneFlyLowDensityu7_Sphere_Om10';
 %     FEA(4).name = 'Haltere_CraneFlyV4_Sphere_Om10';
-    FEA(5).name = 'Haltere_CraneFlyV10_Sphere_Om10';
-%     FEA(6).name = 'Haltere_CraneFlyV10_Sphere_Om10';
-    FEA(7).name = 'Haltere_CraneFlyV11_Sphere_Om10';
-    FEA(8).name = 'Haltere_CraneFlyV11_Sphere_Om10';
-    FEA(9).name = 'Haltere_CraneFlyV12_Sphere_Om10';
-    FEA(10).name = 'Haltere_CraneFlyV12_Sphere_Om10';
-    FEA(11).name = 'Haltere_CraneFlyV14_Sphere_Om10';
-    FEA(12).name = 'Haltere_CraneFlyV14_Sphere_Om10';
+%     FEA(5).name = 'Haltere_CraneFlyV10_Sphere_Om10';
+% %     FEA(6).name = 'Haltere_CraneFlyV10_Sphere_Om10';
+%     FEA(7).name = 'Haltere_CraneFlyV11_Sphere_Om10';
+%     FEA(8).name = 'Haltere_CraneFlyV11_Sphere_Om10';
+%     FEA(9).name = 'Haltere_CraneFlyV12_Sphere_Om10';
+%     FEA(10).name = 'Haltere_CraneFlyV12_Sphere_Om10';
+%     FEA(11).name = 'Haltere_CraneFlyV14_Sphere_Om10';
+%     FEA(12).name = 'Haltere_CraneFlyV14_Sphere_Om10';
     for j =  1:length(FEA)
         tic
         [~, FEA(j).strain, ~] = loadCSV( ['data' filesep  FEA(j).name], { 'eXX' });
@@ -76,12 +80,12 @@ end
 %% deformation in angles 
 
 fig1 = figure();
-    width = 2;     % Width in inches,   find column width in paper 
-    height = 3;    % Height in inches
+    width = 1.4;     % Width in inches,   find column width in paper 
+    height = 2.5;    % Height in inches
     set(fig1, 'Position', [fig1.Position(1:2) width*100, height*100]); %<- Set size
 
     
-len = 101;
+len = 151;
 start = 35;
 It = start:(start+len-1);
 t_plot = (0:len-1)*0.001;
@@ -90,7 +94,7 @@ axOpts_dphi{4} = [0,0.15];
 axOpts_dtheta{4} = [0,0.15];
 axOpts_dgamma{4} = [0,0.15];
 
-for j = [2,5,6]%1:2:11%[1,3,5]
+for j = 1%[1,3,5]%1:2:11%[1,3,5]
     subplot(3,1,1); hold on 
         p1 = plot( t_plot, FEA(j).yAngle(It) );
         ylabel( deformLabels{1} );
@@ -109,7 +113,7 @@ for j = [2,5,6]%1:2:11%[1,3,5]
         ax = gca();
         set(ax,axOpts_dgamma{:})
 end
-legend( FEA([2,5,6]).name)
+% legend( FEA([1,3,5]).name)
 %% Setting paper size for saving 
 set(gca, 'LooseInset', get(gca(), 'TightInset')); % remove whitespace around figure
 tightfig;
@@ -128,12 +132,12 @@ print(fig1, ['figs' filesep 'Figure1_deform_OM0'], '-dsvg', '-r600');
 
 %% Figure 2
 fig2 = figure();
-    width = 2;     % Width in inches,   find column width in paper 
-    height = 3;    % Height in inches
+%     width = 2;     % Width in inches,   find column width in paper 
+%     height = 3;    % Height in inches
     set(fig2, 'Position', [fig2.Position(1:2)+[width*100,0] width*100, height*100]); %<- Set size
     colormap(strainScheme)%     colorbar
         
-for j = 2:2:14
+for j = 2%[2,4,6]
     subplot(3,1,1); hold on 
         p1 = plot( t_plot, FEA(j).yAngle(It) );
         ylabel( deformLabels{1} );
@@ -152,6 +156,8 @@ for j = 2:2:14
         ax = gca();
         set(ax,axOpts_dgamma{:})
 end
+
+
 %% Setting paper size for saving 
 set(gca, 'LooseInset', get(gca(), 'TightInset')); % remove whitespace around figure
 tightfig;

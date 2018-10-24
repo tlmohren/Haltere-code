@@ -10,8 +10,10 @@ saveName = 'figure4_strainData';
 renew_data_load = false
 % renew_data_load = true
 if renew_data_load
+%     FEA(1).name = 'Haltere_CraneFlyLowDensity_Sphere_Om0';
+%     FEA(2).name = 'Haltere_CraneFlyLowDensity_Sphere_Om10';
     FEA(1).name = 'Haltere_CraneFlyLowDensity_Sphere_Om0';
-    FEA(2).name = 'Haltere_CraneFlyLowDensity_Sphere_Om10';
+    FEA(2).name = 'Haltere_CraneFlyLowDensityt8u7_Sphere_Om10';
     for j =  1:length(FEA)
         tic
         [FEA(j).xyz, FEA(j).strain, ~] = loadCSV( ['data' filesep  FEA(j).name], { 'eXX' });        toc 
@@ -206,8 +208,8 @@ end
     bottom = (papersize(2)- height)/2;
     myfiguresize = [left, bottom, width, height];
     set(fig7, 'PaperPosition', myfiguresize);
-    print(fig7, ['figs' filesep 'Figure7_spikeSphere' ], '-dpng', '-r600');
+    print(fig7, ['figs' filesep 'Figure5_spikeSphere' ], '-dpng', '-r600');
     stupid_ratio = 15/16;
     myfiguresize = [left, bottom, width*stupid_ratio, height*stupid_ratio];
     set(fig7, 'PaperPosition', myfiguresize);
-    print(fig7, ['figs' filesep 'Figure7_spikeSphere'  ], '-dsvg', '-r600');
+    print(fig7, ['figs' filesep 'Figure5_spikeSphere'  ], '-dsvg', '-r600');

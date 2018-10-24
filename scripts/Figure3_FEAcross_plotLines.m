@@ -67,8 +67,10 @@ end
 
 %% deformation in angles 
 fig4 = figure();
-    width = 3;     % Width in inches,   find column width in paper 
-    height = 3;    % Height in inches
+%     width = 3;     % Width in inches,   find column width in paper 
+%     height = 3;    % Height in inches
+    width = 2.2;     % Width in inches,   find column width in paper 
+    height = 2.7;    % Height in inches
     set(fig4, 'Position', [fig4.Position(1:2) width*100, height*100]); %<- Set size
 
 deformLabels = {'$\Delta \phi$','$\Delta \theta$','$\Delta \gamma$'};
@@ -121,8 +123,8 @@ bottom = (papersize(2)- height)/2;
 myfiguresize = [left, bottom, width, height];
 set(fig4, 'PaperPosition', myfiguresize);
 
-print(fig4, ['figs' filesep 'Figure3_deformCross' ], '-dpng', '-r600');
+print(fig4, ['figs' filesep 'Figure3_deformCrossLines' ], '-dpng', '-r600');
 stupid_ratio = 15/16;
 myfiguresize = [left, bottom, width*stupid_ratio, height*stupid_ratio];
 set(fig4, 'PaperPosition', myfiguresize);
-print(fig4, ['figs' filesep 'Figure3_deformCross'], '-dsvg', '-r600');
+print(fig4, ['figs' filesep 'Figure3_deformCrossLines'], '-dsvg', '-r600');

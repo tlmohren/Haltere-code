@@ -11,11 +11,17 @@ saveName = 'figure2_bulbGeometry';
 renew_data_load = false
 if renew_data_load
     FEA(1).name = 'Haltere_CraneFlyLowDensity_Sphere_Om0';
-    FEA(2).name = 'Haltere_CraneFlyLowDensity_Sphere_Om10';
-    FEA(3).name = 'Haltere_CraneFlyLowDensity_ellipsoidHor_Om0';
-    FEA(4).name = 'Haltere_CraneFlyLowDensity_ellipsoidHor_Om10';
-    FEA(5).name = 'Haltere_CraneFlyLowDensity_ellipsoidVer_Om0';
-    FEA(6).name = 'Haltere_CraneFlyLowDensity_ellipsoidVer_Om10';   
+%     FEA(2).name = 'Haltere_CraneFlyLowDensity_Sphere_Om10';
+%     FEA(1).name = 'Haltere_CraneFlyLowDensity_Sphere_Om0';
+    FEA(2).name = 'Haltere_CraneFlyLowDensityt8u7_Sphere_Om10';
+    FEA(3).name = 'Haltere_CraneFlyLowDensity_ellipsoidVer_Om0';
+    FEA(4).name = 'Haltere_CraneFlyLowDensity_ellipsoidVert8u7_Om10';
+    FEA(5).name = 'Haltere_CraneFlyLowDensity_ellipsoidHor_Om0';
+    FEA(6).name = 'Haltere_CraneFlyLowDensity_ellipsoidHort8u7_Om10';
+%     FEA(3).name = 'Haltere_CraneFlyLowDensity_ellipsoidHor_Om0';
+%     FEA(4).name = 'Haltere_CraneFlyLowDensity_ellipsoidHor_Om10';
+%     FEA(5).name = 'Haltere_CraneFlyLowDensity_ellipsoidVer_Om0';
+%     FEA(6).name = 'Haltere_CraneFlyLowDensity_ellipsoidVer_Om10';   
     FEA(7).name = 'Haltere_CraneFlyLowDensity_SphereVerOffset_Om0';
     FEA(8).name = 'Haltere_CraneFlyLowDensity_SphereVerOffset_Om10';
     FEA(9).name = 'Haltere_CraneFlyLowDensity_ellipsoidVerOffset_Om0';
@@ -75,8 +81,8 @@ end
 
 %% deformation in angles 
 fig1 = figure();
-    width = 3;     % Width in inches,   find column width in paper 
-    height = 3;    % Height in inches
+    width = 2.2;     % Width in inches,   find column width in paper 
+    height = 2.7;    % Height in inches
     set(fig1, 'Position', [fig1.Position(1:2)-[width*100,0] width*100, height*100]); %<- Set size
 
 
@@ -111,6 +117,7 @@ for k = 1:3
             set(ax,axOpts_dgamma{:})
     end
 end
+legend()
 
 %% Setting paper size for saving 
 set(gca, 'LooseInset', get(gca(), 'TightInset')); % remove whitespace around figure
@@ -121,16 +128,16 @@ left = (papersize(1)- width)/2;
 bottom = (papersize(2)- height)/2;
 myfiguresize = [left, bottom, width, height];
 set(fig1, 'PaperPosition', myfiguresize);
-print(fig1, ['figs' filesep 'Figure3_deform' ], '-dpng', '-r600');
+print(fig1, ['figs' filesep 'Figure2_deformLines' ], '-dpng', '-r600');
 stupid_ratio = 15/16;
 myfiguresize = [left, bottom, width*stupid_ratio, height*stupid_ratio];
 set(fig1, 'PaperPosition', myfiguresize);
-print(fig1, ['figs' filesep 'Figure3_deform'], '-dsvg', '-r600');
+print(fig1, ['figs' filesep 'Figure2_deformLines'], '-dsvg', '-r600');
 
 %% deformation in angles 
 fig2 = figure();
-    width = 3;     % Width in inches,   find column width in paper 
-    height = 3;    % Height in inches
+%     width = 3;     % Width in inches,   find column width in paper 
+%     height = 3;    % Height in inches
     set(fig2, 'Position', [fig2.Position(1:2) width*100, height*100]); %<- Set size
 
 % deformLabels = {'$\Delta \phi$','$\Delta \theta$','$\Delta \gamma$'};
@@ -139,7 +146,6 @@ len = 101;
 start = 35;
 It = start:(start+len-1);
 t_plot = (0:len-1)*0.001;
-
 
 axOpts_dgamma= {'XGrid','On','XLim',[0,t_plot(end)],'XTick',[0:0.05:t_plot(end)] ,...
                'YLim',[-1,1]*3e-5};   
@@ -177,16 +183,16 @@ bottom = (papersize(2)- height)/2;
 myfiguresize = [left, bottom, width, height];
 set(fig2, 'PaperPosition', myfiguresize);
 
-print(fig2, ['figs' filesep 'Figure3_deformOffset' ], '-dpng', '-r600');
+print(fig2, ['figs' filesep 'Figure2_deformOffsetLines' ], '-dpng', '-r600');
 stupid_ratio = 15/16;
 myfiguresize = [left, bottom, width*stupid_ratio, height*stupid_ratio];
-set(fig1, 'PaperPosition', myfiguresize);
-print(fig2, ['figs' filesep 'Figure3_deformOffset'], '-dsvg', '-r600');
+set(fig2, 'PaperPosition', myfiguresize);
+print(fig2, ['figs' filesep 'Figure2_deformOffsetLines'], '-dsvg', '-r600');
 
 %% deformation in angles 
 fig3 = figure();
-    width = 3;     % Width in inches,   find column width in paper 
-    height = 3;    % Height in inches
+%     width = 3;     % Width in inches,   find column width in paper 
+%     height = 3;    % Height in inches
     set(fig3, 'Position', [fig3.Position(1:2) width*100, height*100]); %<- Set size
 
 axOpts_dgamma= {'XGrid','On','XLim',[0,t_plot(end)],'XTick',[0:0.05:t_plot(end)] ,...
@@ -225,8 +231,8 @@ bottom = (papersize(2)- height)/2;
 myfiguresize = [left, bottom, width, height];
 set(fig3, 'PaperPosition', myfiguresize);
 
-print(fig3, ['figs' filesep 'Figure3_deformOffsetZoom' ], '-dpng', '-r600');
+print(fig3, ['figs' filesep 'Figure2_deformOffsetLinesZoom' ], '-dpng', '-r600');
 stupid_ratio = 15/16;
 myfiguresize = [left, bottom, width*stupid_ratio, height*stupid_ratio];
-set(fig1, 'PaperPosition', myfiguresize);
-print(fig3, ['figs' filesep 'Figure3_deformOffsetZoom'], '-dsvg', '-r600');
+set(fig3, 'PaperPosition', myfiguresize);
+print(fig3, ['figs' filesep 'Figure2_deformOffsetLinesZoom'], '-dsvg', '-r600');

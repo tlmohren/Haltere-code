@@ -4,6 +4,18 @@ theta = linspace(0,2*pi,17);
 theta(1) = 2*pi;
 xDes = [0:150:4800];
 
+
+fsz = 7;
+set(0,'DefaultAxesFontSize',fsz)% .
+set(0,'DefaultLegendFontSize',fsz)% .
+% set(0,   'DefaultAxesFontAngle', 'normal', ... % Not sure the difference here
+%       'DefaultAxesFontWeight', 'normal', ... % Not sure the difference here
+
+% Figure text font multiplier 
+set(0,'DefaultAxesLabelFontSize', 1)
+set(0,'DefaultAxesTitleFontSize', 1)
+
+
 circleDistance = 3000;               % distance from base to haltere 
 circleRadius = 150;                 % radius of haltere   
         
@@ -56,7 +68,7 @@ deformLabels = {'$\Delta \phi$','$\Delta \theta$','$\Delta \gamma$'};
 axOpts_dphi= {'XGrid','On','XLim',[0,t_plot(end)],'XTick',[0:0.05:0.15],'XTickLabel',{'','','',''} ,...
                'YLim',[-1,1]*0.005}; 
 axOpts_dtheta= {'XGrid','On','XLim',[0,t_plot(end)],'XTick',[0:0.05:0.15],'XTickLabel',{'','','',''} ,...
-               'YLim',[-1,1]*2e-4}; 
+               'YLim',[-1,1]*3e-4}; 
 axOpts_dgamma= {'XGrid','On','XLim',[0,t_plot(end)],'XTick',[0:0.05:0.15] ,...
                'YLim',[-1,1]*3e-6}; 
            

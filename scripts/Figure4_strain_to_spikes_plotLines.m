@@ -12,8 +12,10 @@ renew_data_load = false
 if renew_data_load
 %     FEA(1).name = 'Haltere_CraneFly_Sphere_Om0';
 %     FEA(2).name = 'Haltere_CraneFly_Sphere_Om10';
+%     FEA(1).name = 'Haltere_CraneFlyLowDensity_Sphere_Om0';
+%     FEA(2).name = 'Haltere_CraneFlyLowDensity_Sphere_Om10';
     FEA(1).name = 'Haltere_CraneFlyLowDensity_Sphere_Om0';
-    FEA(2).name = 'Haltere_CraneFlyLowDensity_Sphere_Om10';
+    FEA(2).name = 'Haltere_CraneFlyLowDensityt8u7_Sphere_Om10';
     for j =  1:length(FEA)
         tic
         [FEA(j).xyz, FEA(j).strain, ~] = loadCSV( ['data' filesep  FEA(j).name], { 'eXX' });        toc 
@@ -73,10 +75,10 @@ calib_param_max = [0.000705312124793717,0.00521574728317378,0.00916987624184632,
     It = start:(start+len-1);
     t_plot = (0:len-1)*0.001;
 
-    axCircle= { 'XLim',[0,t_plot(end)],'XTick',[0:0.05:t_plot(end)]}; 
-    axZero= { 'XLim',[0,t_plot(end)],'XTick',[0:0.05:t_plot(end)],'XTickLabel',{'','',''}}; 
-    axCircleSpike= { 'YLim',[0,1.6],'XLim',[0,t_plot(end)],'XTick',[0:0.05:t_plot(end)]}; 
-    axZeroSpike= { 'YLim',[0,1.6],'XLim',[0,t_plot(end)],'XTick',[0:0.05:t_plot(end)],'XTickLabel',{'','',''}}; 
+    axCircle= { 'XLim',[0,t_plot(end)],'XTick',[0:0.05:t_plot(end)],'Xgrid','on'}; 
+    axZero= { 'XLim',[0,t_plot(end)],'XTick',[0:0.05:t_plot(end)],'XTickLabel',{'','',''},'Xgrid','on'}; 
+    axCircleSpike= { 'YLim',[0,1.6],'XLim',[0,t_plot(end)],'XTick',[0:0.05:t_plot(end)],'Xgrid','on'}; 
+    axZeroSpike= { 'YLim',[0,1.6],'XLim',[0,t_plot(end)],'XTick',[0:0.05:t_plot(end)],'XTickLabel',{'','',''},'Xgrid','on'}; 
 
 calib_param_cross = [0.0047, 0.0803, 0.0047, 0.0803]; 
 for jj = 1%1:length(FEA)/2 
@@ -135,7 +137,7 @@ for jj = 1%1:length(FEA)/2
             plot( t_plot,FEA(j).strain(FEA(j).circleInds(k),It )  )
         end
         if kl == 3
-            ylabel('$\epsilon$')
+            ylabel('Strain')
         end
         ax = gca();
         if kl == 5
@@ -155,11 +157,11 @@ for jj = 1%1:length(FEA)/2
     bottom = (papersize(2)- height)/2;
     myfiguresize = [left, bottom, width, height];
     set(fig2, 'PaperPosition', myfiguresize);
-    print(fig2, ['figs' filesep 'Figure3_spikeStrain_'  FEA(j).name(18:end-5) ], '-dpng', '-r600');
+    print(fig2, ['figs' filesep 'Figure4_spikeStrain_'  FEA(j).name(18:end-5) ], '-dpng', '-r600');
     stupid_ratio = 15/16;
     myfiguresize = [left, bottom, width*stupid_ratio, height*stupid_ratio];
     set(fig2, 'PaperPosition', myfiguresize);
-    print(fig2, ['figs' filesep 'Figure3_spikeStrain_'  FEA(j).name(18:end-5) ], '-dsvg', '-r600');
+    print(fig2, ['figs' filesep 'Figure4_spikeStrain_'  FEA(j).name(18:end-5) ], '-dsvg', '-r600');
     
 %% 
     len10 = 1001;
@@ -184,14 +186,14 @@ for jj = 1%1:length(FEA)/2
                plot( [1,1]'*t_plot10(  spike_ind_temp(which_) - start10 ),...
                    ([1.75 ; 1.55] - (j-(2*(jj-1)))/4 )  * ones(1, length(  spike_ind_temp(which_) )),'k')
                FEA(j).timing{k} = t_plot10(  spike_ind_temp(which_) - start10 );
-               try
-                   if mod(j,2) == 0
-                       FEA(j).dt{k} = FEA(j).timing{k} - FEA(j-1).timing{k};
-                       text(0.01, 1,['$\Delta$ t=',num2str(FEA(j).dt{k}(1))])
-                   end
-               end
-            else
-                   text(0.01, 1,['$\Delta$ t= NaN'])
+%                try
+%                    if mod(j,2) == 0
+%                        FEA(j).dt{k} = FEA(j).timing{k} - FEA(j-1).timing{k};
+%                        text(0.01, 1,['$\Delta$ t=',num2str(FEA(j).dt{k}(1))])
+%                    end
+%                end
+%             else
+%                    text(0.01, 1,['$\Delta$ t= NaN'])
             end
        end
     %     
@@ -215,11 +217,11 @@ for jj = 1%1:length(FEA)/2
     bottom = (papersize(2)- height)/2;
     myfiguresize = [left, bottom, width, height];
     set(fig6, 'PaperPosition', myfiguresize);
-    print(fig6, ['figs' filesep 'Figure3_spikes_'  FEA(j).name(18:end-5) ], '-dpng', '-r600');
+    print(fig6, ['figs' filesep 'Figure4_spikes_'  FEA(j).name(18:end-5) ], '-dpng', '-r600');
     stupid_ratio = 15/16;
     myfiguresize = [left, bottom, width*stupid_ratio, height*stupid_ratio];
     set(fig6, 'PaperPosition', myfiguresize);
-    print(fig6, ['figs' filesep 'Figure3_spikes_'  FEA(j).name(18:end-5) ], '-dsvg', '-r600');
+    print(fig6, ['figs' filesep 'Figure4_spikes_'  FEA(j).name(18:end-5) ], '-dsvg', '-r600');
 
     
 end
