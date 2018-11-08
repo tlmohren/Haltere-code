@@ -15,6 +15,7 @@ C1 = 3*pi*(r2^4-r1^4);
 C2 = 1/Jratio*pi/4*(r2^4-r1^4)/beta;
 % C2 = 1/Jratio*pi/2*(r2^4-r1^4)/beta;
 A = sqrt(C1/C2)
+A = (12*beta*Jratio)^(0.5)
 
 b = (C1/A^3)^(1/4)
 h = A*b
@@ -37,6 +38,8 @@ for A = 1:20
     h = b*A_used;
     J_ratioVec(A) = pi/4*(r2^4-r1^4)/ (beta*A*b^4);
 end
+
+
 
 figure()
 plot(1:length(J_ratioVec),J_ratioVec)
