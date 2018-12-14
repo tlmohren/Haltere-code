@@ -9,16 +9,12 @@ saveName = 'figure4_strainData';
 
 renew_data_load = false
 % renew_data_load = true
-if renew_data_load 
-    FEA(1).name = 'Haltere_CraneFlyLowDensityWbulb_Sphere_Om0'; 
-    FEA(2).name = 'Haltere_CraneFlyLowDensityt8u7wBulb_Sphere_Om10'; 
+if renew_data_load
+    FEA(1).name = 'Haltere_CraneFlyLowDensity_Sphere_Om0';
+    FEA(2).name = 'Haltere_CraneFlyLowDensityt8u7_Sphere_Om10';
     for j =  1:length(FEA)
         tic
-        [FEA(j).xyz, FEA(j).strain, ~] = loadCSV( ['data' filesep  FEA(j).name], { 'eXX' });       
-%         [~, FEA(j).strain, ~] = loadCSV( ['data' filesep  FEA(j).name], { 'eXX' });
-        [FEA(j).xyz, FEA(j).deform, ~] = loadCSV( ['data' filesep  FEA(j).name], { 'u2','v2','w2'});
-        [~, FEA(j).angles, ~] = loadCSV( ['data' filesep  FEA(j).name], { 'flapangle','theta_angle'});
-         toc 
+        [FEA(j).xyz, FEA(j).strain, ~] = loadCSV( ['data' filesep  FEA(j).name], { 'eXX' });        toc 
     end
     % Determine Circle locations
     for j = 1:length(FEA)
@@ -43,13 +39,7 @@ if renew_data_load
 
         FEA(j).sideInds = intersect(xMatch,yMatch);
         FEA(j).topInds = intersect(xMatch,zMatch);
-%         [~, FEA(j).phi, ~] = loadCSV( ['data' filesep  FEA(j).name], { 'flapangle'});
-        
-        FEA(j).phi = FEA(j).angles(1,:,1) ;
-        FEA(j).theta = -FEA(j).angles(1,:,2) ; 
-        [ n_points,n_times, n_deform] = size( FEA(j).deform ); 
-        FEA(j).xyzPoints = FEA(j).deform  + ...       
-            permute( repmat( FEA(j).xyz,1,1, n_times), [1,3,2] ) ;
+        [~, FEA(j).phi, ~] = loadCSV( ['data' filesep  FEA(j).name], { 'flapangle'});
         
     end
     save(['data' filesep saveName],'FEA')
@@ -136,78 +126,83 @@ end
     spike_order = [5:13, 13:16, 1:5];
 
 %% 
-    spike_order = [5:13, fliplr([13:16, 1:5]) ];
-
+%     spike_order = [5:13, fliplr([13:16, 1:5]) ];
+    spike_order = 9:13;
     fig7= figure();
-        width = 5;     % Width in inches,   find column width in paper 
-        height = 5;    % Height in inches
+        width = 2;     % Width in inches,   find column width in paper 
+        height = 2;    % Height in inches
         set(fig7, 'Position', [fig7.Position(1:2)-[width,height]*100 width*100, height*100]); %<- Set size
         
-    subplot(1,2,1); hold on 
-        scatter( FEA(1).xyz( FEA(1).circleInds(5:13),2 ),  FEA(1).xyz( FEA(1).circleInds(5:13),3 ) +150+350,'k','filled')
-
-        scatter( FEA(1).xyz( FEA(1).circleInds( [13:16, 1:5] ),2 ),  FEA(1).xyz( FEA(1).circleInds( [13:16, 1:5] ),3 ) +150 ,'k','filled')
-        theta = 0:0.001:pi;
-        plot( -sin(theta)*150,cos(theta)*150 +150+350,'k')
-        plot( sin(theta)*150,cos(theta)*150 +150,'k')
-
-        axis equal
-        axis([-180,180,-10,900])
+%     subplot(1,2,1); hold on 
+%         scatter( FEA(1).xyz( FEA(1).circleInds(5:13),2 ),  FEA(1).xyz( FEA(1).circleInds(5:13),3 ) +150+350,'k','filled')
+% 
+%         scatter( FEA(1).xyz( FEA(1).circleInds( [13:16, 1:5] ),2 ),  FEA(1).xyz( FEA(1).circleInds( [13:16, 1:5] ),3 ) +150 ,'k','filled')
+%         theta = 0:0.001:pi;
+%         plot( -sin(theta)*150,cos(theta)*150 +150+350,'k')
+%         plot( sin(theta)*150,cos(theta)*150 +150,'k')
+% 
+%         axis equal
+%         axis([-180,180,-10,900])
     
-    subplot(122) ; hold on 
-    
-        rectangle('Position',[1,2.9,24,4.8],'Curvature',0,'FaceColor',[1,1,1]*0.95)
-        rectangle('Position',[1,-2.6,24,4.8],'Curvature',0,'FaceColor',[1,1,1]*0.95)
-        plot(  t_plot1, FEA(1).phi(1,It1) +10 ,'k')
+%     subplot(122) ;
+    hold on 
+       rectangle('Position',[-0.1,0.1,0.2,10],'Curvature',0,'FaceColor',[1,1,1]*0.95,'EdgeColor','none')
+    plot([0,0],[0,10],'k')
+%         rectangle('Position',[1,2.9,24,4.8],'Curvature',0,'FaceColor',[1,1,1]*0.95)
+%         rectangle('Position',[1,-2.6,24,4.8],'Curvature',0,'FaceColor',[1,1,1]*0.95)
+%         plot(  t_plot1, FEA(1).phi(1,It1) +10 ,'k')
         
-    for kl = 1:length(spike_order)
+    for kl =1:length(spike_order)
 %         kl
         k = spike_order( kl ) ;
 %         hold on
 
-        % flapping 
-        for j = [1] 
+dt = 20.765; 
+        for j = [1]%[1,2]+(2*(jj-1))
+%             subplot(1,32)
             spike_ind_temp = FEA(j).spikeInds{k};
                 which_ = (spike_ind_temp<=It10(end)) & (spike_ind_temp>=It10(1));
                 
             if any(spike_ind_temp) & kl <=9
-               plot( [1,1]'*t_plot10(  spike_ind_temp(which_) - start10+1 ),...
+               plot(-dt+ [1,1]'*t_plot10(  spike_ind_temp(which_) - start10+1 ),...
                    ([9 ; 8.6] - kl*0.5 -1)  * ones(1, length(  spike_ind_temp(which_) )),'k')
             elseif any(spike_ind_temp) 
-               plot( [1,1]'*t_plot10(  spike_ind_temp(which_) - start10+1 ),...
+               plot(-dt+[1,1]'*t_plot10(  spike_ind_temp(which_) - start10+1 ),...
                    ([9 ; 8.6] - kl*0.5 - 2)  * ones(1, length(  spike_ind_temp(which_) )),'k')
+            
+        t_plot10(  spike_ind_temp(which_) - start10 +1)
             end
         end
-        
-        % flapping w rotation 
+%         if kl == 1
+%                plot( [1,1]'*t_plot10(  spike_ind_temp(which_) - start10 +1 ),...
+%                    ([-3,10])  * ones(1, length(  spike_ind_temp(which_) )),':k')
+%         elseif kl == 9
+%                plot( -20.7+[1,1]'*t_plot10(  spike_ind_temp(which_) - start10 +1),...
+%                    ([-3,10])  * ones(1, length(  spike_ind_temp(which_) )),':k')
+%         end
         for j = [2]%[1,2]+(2*(jj-1))
 %             subplot(1,32)
             spike_ind_temp = FEA(j).spikeInds{k};
                 which_ = (spike_ind_temp<=It10(end)) & (spike_ind_temp>=It10(1));
                 
             if any(spike_ind_temp) & kl <=9
-               plot( [1,1]'*t_plot10(  spike_ind_temp(which_) - start10+1 ),...
+               plot( -dt+[1,1]'*t_plot10(  spike_ind_temp(which_) - start10+1 ),...
                    ([9 ; 8.6] - kl*0.5 -1)  * ones(1, length(  spike_ind_temp(which_) )),'r')
             elseif any(spike_ind_temp) 
-               plot( [1,1]'*t_plot10(  spike_ind_temp(which_) - start10 +1),...
+               plot( -dt+[1,1]'*t_plot10(  spike_ind_temp(which_) - start10 +1),...
                    ([9 ; 8.6] - kl*0.5 - 2)  * ones(1, length(  spike_ind_temp(which_) )),'r')
             end
-        end
-        if kl == 1
-               plot( [1,1]'*t_plot10(  spike_ind_temp(which_) - start10 +1 ),...
-                   ([-3,10])  * ones(1, length(  spike_ind_temp(which_) )),':k')
-        elseif kl == 9
-               plot( [1,1]'*t_plot10(  spike_ind_temp(which_) - start10 +1),...
-                   ([-3,10])'  * ones(1, length(  spike_ind_temp(which_) )),':k')
+            t_plot10(  spike_ind_temp(which_) - start10 +1)
         end
     end
-    
-%     axis([0,25,-3,12])
+
+%     axis([19,25,5,8])
+    axis([-1,5,5,8])
     xlabel('Time (ms)')
-    ylabel('Flapping angle $\phi(t)$')
-%     ax = gca();
-    set(gca(),'YTick', [10-pi/2,10,10+pi/2] ,'YTickLabel',{'$\frac{\pi}{2}$',0,'$\frac{\pi}{2}$' } )
-    title('Spikes along circumference')
+%     ylabel('Flapping angle $\phi(t)$')
+% %     ax = gca();
+%     set(gca(),'YTick', [10-pi/2,10,10+pi/2] ,'YTickLabel',{'$\frac{\pi}{2}$',0,'$\frac{\pi}{2}$' } )
+%     title('Spikes along circumference')
     
     
     
@@ -219,8 +214,8 @@ end
     bottom = (papersize(2)- height)/2;
     myfiguresize = [left, bottom, width, height];
     set(fig7, 'PaperPosition', myfiguresize);
-    print(fig7, ['figs' filesep 'Figure5_spikeSphere' ], '-dpng', '-r600');
+    print(fig7, ['figs' filesep 'Figure5_spikeZoom' ], '-dpng', '-r600');
     stupid_ratio = 15/16;
     myfiguresize = [left, bottom, width*stupid_ratio, height*stupid_ratio];
     set(fig7, 'PaperPosition', myfiguresize);
-    print(fig7, ['figs' filesep 'Figure5_spikeSphere'  ], '-dsvg', '-r600');
+    print(fig7, ['figs' filesep 'Figure5_spikeZoom'  ], '-dsvg', '-r600');

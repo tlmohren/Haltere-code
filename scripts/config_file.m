@@ -1,26 +1,22 @@
-
-% mesh locations
+% mesh parameters 
 theta = linspace(0,2*pi,17);
 theta(1) = 2*pi;
-xDes = [0:150:4800];
-
-
+xDes =  0:150:4800 ;
+n = 16;
+ 
+% plot parameters 
 fsz = 7;
 set(0,'DefaultAxesFontSize',fsz)% .
-set(0,'DefaultLegendFontSize',fsz)% .
-% set(0,   'DefaultAxesFontAngle', 'normal', ... % Not sure the difference here
-%       'DefaultAxesFontWeight', 'normal', ... % Not sure the difference here
-
+set(0,'DefaultLegendFontSize',fsz)% . 
 % Figure text font multiplier 
 set(0,'DefaultAxesLabelFontSize', 1)
 set(0,'DefaultAxesTitleFontSize', 1)
 
-
-circleDistance = 3000;               % distance from base to haltere 
+% parameters for finding bulb indices 
+circleDistance = 5000;               % distance from base to bulb center 
 circleRadius = 150;                 % radius of haltere   
         
-n = 16;
-% colorscheme
+% colorscheme for mesh plots
 redPurple = [158,1,66
 213,62,79
 244,109,67
@@ -40,37 +36,20 @@ surfParamBackground = {'FaceAlpha',1,'EdgeAlpha',0.4};
 surfParamBackgroundTwistStalk = {'FaceAlpha',1,'EdgeAlpha',0.4};
 surfParamForeground = {'FaceAlpha',1,'EdgeAlpha',0.4};
 
-% axis opts 
-
-% used indices for plotting 
-% It = 1:160;
+% time indices for plotting 
 len = 101;
 start = 35;
 It = start:(start+len-1);
 t_plot = (0:len-1)*0.001;
-
-% axOpts = {'XGrid','On','XLim',[0,t_plot(end)],'XTick',[0:0.05:0.15]}; 
-% axOptsNoT = {'XGrid','On','XLim',[0,t_plot(end)],'XTick',[0:0.05:0.15],'XTickLabel',{'','','',''} }; 
-
-% t = 0:0.001:0.35;
-
+ 
+% ylabels 
 deformLabels = {'$\Delta \phi$','$\Delta \theta$','$\Delta \gamma$'};
         
-
-% axOpts_dphi= {'XGrid','On','XLim',[0,t_plot(end)],'XTick',[0:0.05:0.10],'XTickLabel',{'','','',''} ,...
-%                'YLim',[-1,1]*0.005}; 
-% axOpts_dtheta= {'XGrid','On','XLim',[0,t_plot(end)],'XTick',[0:0.05:0.10],'XTickLabel',{'','','',''} ,...
-%                'YLim',[-1,1]*2e-4}; 
-% axOpts_dgamma= {'XGrid','On','XLim',[0,t_plot(end)],'XTick',[0:0.05:0.10] ,...
-%                'YLim',[-1,1]*2e-6};           
-           
-           
+ 
+% axis opts            
 axOpts_dphi= {'XGrid','On','XLim',[0,t_plot(end)],'XTick',[0:0.05:0.15],'XTickLabel',{'','','',''} ,...
                'YLim',[-1,1]*0.005}; 
 axOpts_dtheta= {'XGrid','On','XLim',[0,t_plot(end)],'XTick',[0:0.05:0.15],'XTickLabel',{'','','',''} ,...
                'YLim',[-1,1]*3e-4}; 
 axOpts_dgamma= {'XGrid','On','XLim',[0,t_plot(end)],'XTick',[0:0.05:0.15] ,...
                'YLim',[-1,1]*3e-6}; 
-           
-           
-           
