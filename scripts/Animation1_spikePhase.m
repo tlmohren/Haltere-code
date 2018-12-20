@@ -4,64 +4,11 @@ addpathFolderStructureHaltere()
 run('config_file.m')
 
 animation_name = 'haltereSpiking_highQualityTest';
-%%
-loadName = 'figure4_strainData';
-saveName = 'figure4_strainData';
 
-renew_data_load = false
-% renew_data_load = true
-if renew_data_load
-    FEA(1).name = 'Haltere_CraneFlyLowDensitywBulb_Sphere_Om0'; 
-    FEA(2).name = 'Haltere_CraneFlyLowDensityt8u7wBulb_Sphere_Om10'
-    for j =  1:length(FEA)
-        tic
-%         [FEA(j).xyz, FEA(j).strain, ~] = loadCSV( ['data' filesep  FEA(j).name], { 'eXX' });        toc 
-        
-        [~, FEA(j).strain, ~] = loadCSV( ['data' filesep  FEA(j).name], { 'eXX' });
-        [FEA(j).xyz, FEA(j).deform, ~] = loadCSV( ['data' filesep  FEA(j).name], { 'u2','v2','w2'});
-        [~, FEA(j).angles, ~] = loadCSV( ['data' filesep  FEA(j).name], { 'flapangle','theta_angle'});
-        toc
-    end
-    % Determine Circle locations
-    for j = 1:2 
-        circleDistance = 300;               % distance from base to haltere 
-        circleRadius = 150;                 % radius of haltere   
-        mindist =  min( abs( FEA(j).xyz(:,1) - circleDistance) );
-        xMatch = find(  abs(FEA(j).xyz(:,1) - circleDistance) <= (mindist+1) );
-        rMatch = find( sqrt(FEA(j).xyz(:,2).^2 + FEA(j).xyz(:,3).^2)  >= circleRadius*0.99 );
+loadName = 'FEA_processed_data';
+load(['data' filesep loadName],'FEA')
 
-        yMatch = find( round( abs( FEA(j).xyz(:,2) ), 7) == circleRadius );
-        zMatch = find( round( abs( FEA(j).xyz(:,3) ), 7) == circleRadius );
-
-        FEA(j).circleIndsUnsorted = intersect( xMatch,rMatch); 
-        
-        angle = atan2( FEA(j).xyz( FEA(j).circleIndsUnsorted,3), ...
-            FEA(j).xyz( FEA(j).circleIndsUnsorted,2) );
-        angleDeg = rad2deg(angle);
-        angleDeg(angleDeg<0) = angleDeg(angleDeg<0)+360;
-        [V,I_sort] = sort(angleDeg,'ascend');
-% 
-        FEA(j).circleInds= FEA(j).circleIndsUnsorted(I_sort);
-
-        FEA(j).sideInds = intersect(xMatch,yMatch);
-        FEA(j).topInds = intersect(xMatch,zMatch);
-        [~, FEA(j).phi, ~] = loadCSV( ['data' filesep  FEA(j).name], { 'flapangle'});
-        
-        FEA(j).phi = FEA(j).angles(1,:,1) ;
-        FEA(j).theta = -FEA(j).angles(1,:,2) ; 
-        [ n_points,n_times, n_deform] = size( FEA(j).deform );
-        % compute actual point locations 
-        FEA(j).xyzPoints = FEA(j).deform  + ...       
-            permute( repmat( FEA(j).xyz,1,1, n_times), [1,3,2] ) ;
-        
-        
-    end
-    save(['data' filesep saveName],'FEA')
-else
-    load(['data' filesep loadName],'FEA')
-end
-
-%% apply neural encoding
+%% apply neural encoding to strain 
 
 STAfreq = 0.5;
 STAwidth = 5;
@@ -74,19 +21,12 @@ fSamp = 1000;
 subSamp =10;
 STAt = linspace(-39,0,40*subSamp);
 parse_extra = 5;
-% calib_param_max = [0.00298239604088481,0.0212443192274280,0.0372780009360082,0.0479350861876651,0.0514646550697229,0.0475135494972593,0.0363905581996612,0.0198191699014800,0.00299958384555981,0.0201797042231435,0.0370669398494605,0.0483996355340012,0.0524251480251299,0.0487363345563017,0.0377914840661745,0.0213792050886826];
 calib_param_max = [0.000705312124793717,0.00521574728317378,0.00916987624184632,0.0117979355154750,0.0126693024102941,0.0116192206073620,0.00884906250717318,0.00484166706412837,0.000716359983875505,0.00495047057398658,0.00903488798016781,0.0118425516863485,0.0128937828713950,0.0119841717461618,0.00928771453961158,0.00524523737029323];
-
-    selected_dots = 5:9;
-    len = 101;
-    start = 35;
-    It = start:(start+len-1);
-    t_plot = (0:len-1)*0.001;
-
-    axCircle= { 'XLim',[0,t_plot(end)],'XTick',[0:0.05:t_plot(end)]}; 
-    axZero= { 'XLim',[0,t_plot(end)],'XTick',[0:0.05:t_plot(end)],'XTickLabel',{'','',''}}; 
-    axCircleSpike= { 'YLim',[0,1.6],'XLim',[0,t_plot(end)],'XTick',[0:0.05:t_plot(end)]}; 
-    axZeroSpike= { 'YLim',[0,1.6],'XLim',[0,t_plot(end)],'XTick',[0:0.05:t_plot(end)],'XTickLabel',{'','',''}}; 
+ 
+len = 101;
+start = 35;
+It = start:(start+len-1);
+t_plot = (0:len-1)*0.001; 
 
 calib_param_cross = [0.0047, 0.0803, 0.0047, 0.0803]; 
 for jj = 1:length(FEA)/2 
@@ -100,10 +40,8 @@ for jj = 1:length(FEA)/2
 
             STA = STAfun(STAt);
             strainConv = conv( [zeros(1,length(STA)-1),strainInterp], fliplr( STA), 'valid');
-%             strainConv = conv( [zeros(1,length(STA)-1),strainInterp], ( STA), 'valid');
-            calib_param(j,k) = max(  strainConv );
-    %         FEA(j).pFire(k,:) = NLDfun( strainConv/calib_param(j,k) );
-            if jj ~=7
+             calib_param(j,k) = max(  strainConv );
+             if jj ~=7
                 FEA(j).pFire(k,:) = NLDfun( strainConv/calib_param_max(k) );
                 FEA(j).spikeInds{k} = findSpikes( FEA(j).pFire(k,:) ); 
             elseif jj == 7
@@ -121,9 +59,8 @@ for jj = 1:length(FEA)/2
 end
 
 
-%% 
-
-% only used for phi 
+%% Set what times to plot, and what times to up sample for neural encoding 
+ 
 len1 = 26;
 start1 = 166;
 It1 = start1:(start1+len1-1);
@@ -135,58 +72,24 @@ start10 = 1661;
 It10 = start10:(start10+len10-1);
 t_plot10 = linspace(0,25,len10);
 
-spike_order = [5:13, 13:16, 1:5];
+spike_order = [5:13, 13:16, 1:5]; 
 
-%%
+%% Compute intermediate haltere positions 
 
-
-FEA(1).xrtheta(:,1) = FEA(1).xyz(:,1);
-FEA(1).xrtheta(:,2) = sqrt( FEA(1).xyz(:,2).^2  +  FEA(1).xyz(:,3).^2 ); 
-FEA(1).xrtheta(:,3) = wrapTo2Pi(  atan2( FEA(1).xyz(:,3), FEA(1).xyz(:,2) ) +pi -0.02 )+0.02;
-
-
-theta = linspace(0,2*pi,17);
-theta(1) = 2*pi;
-xDes = 0:150:4500; 
-for j = 1:200
-    for k = 1:length(xDes)
-        dx = abs(FEA(1).xrtheta(:,1)-xDes(k) );
-        dr = abs(FEA(1).xrtheta(:,2)-150 );
-        for l = 1:length(theta)
-    %         theta(k)
-            da = abs(FEA(1).xrtheta(:,3) - theta(l) );
-            J = dx.^2 + dr.^2+ (da*150.^2);
-            [V,I] = min(J);
-           Xb(k,l,j) = FEA(1).xyzPoints(I,j,1);
-           Yb(k,l,j) = FEA(1).xyzPoints(I,j,2);
-           Zb(k,l,j) = FEA(1).xyzPoints(I,j,3);
-           Cb(k,l,j) = FEA(1).strain(I,j); 
-        end
-    end
-end
-% 1 = 1; 
-
-% [z,y,xBulb] = ellipsoid(0,0,0,440,440,440,16);
-
-colormap(strainScheme)%     colorbar
-
-%% make intermediate haltere positions 
+% interpolate flap angles 
 tOrig = 1:26;
 phiOrig = FEA(1).phi(start1: (start1+len1-1));
 tNew = 1:0.1:26; 
 phiInterp = interp1(tOrig,phiOrig, tNew );
-
-%% 
-
-
-[zBulb,yBulb,xBulb] = ellipsoid(0,0,0,440,440,440,16);
-xBulb = xBulb + 4800; 
+ 
+[zBulb,yBulb,xBulbLocal] = ellipsoid(0,0,0,440,440,440,16);
+xBulb = xBulbLocal + 4800; 
+Cbulb = zeros(size(xBulb)) ; 
 
 FEA(1).xrtheta(:,1) = FEA(1).xyz(:,1);
 FEA(1).xrtheta(:,2) = sqrt( FEA(1).xyz(:,2).^2  +  FEA(1).xyz(:,3).^2 ); 
 FEA(1).xrtheta(:,3) = wrapTo2Pi(  atan2( FEA(1).xyz(:,3), FEA(1).xyz(:,2) ) +pi -0.02 )+0.02;
-
-
+ 
 XbStalk = zeros(length(xDes), length(theta),200); 
 YbStalk = XbStalk;
 ZbStalk = XbStalk; 
@@ -212,71 +115,20 @@ for j = 1:length(phiInterp)
             XbStalk(k,l,j) = xyzTranspose(1) ; 
             YbStalk(k,l,j) = xyzTranspose(2) ; 
             ZbStalk(k,l,j) = xyzTranspose(3) ; 
-            
-           
+             
         end
     end
 end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-%% 
-C = ones(size(xBulb))*0;
-ImaxBottom = 155;
-ImaxTop = 39;
-
-
+ Cstalk = zeros(size(XbStalk(:,:,1)));
+ 
+%% Start figure 
 spike_order = [5:13, fliplr([13:16, 1:5]) ]; 
 surfParamForeground = {'EdgeAlpha',0.4 };
-
-% surfParamForeground = {'EdgeAlpha',0.4};
-rectif = @(x) (x<=1)*x ;
- 
-
-%% 
- 
- 
+rectif = @(x) (x<=1)*x ; 
 fsz = 14;
 set(0,'DefaultAxesFontSize',fsz)% .
 set(0,'DefaultLegendFontSize',fsz)% .
+
 
 fig7= figure();
     width = 12;     % Width in inches,   find column width in paper 
@@ -284,18 +136,19 @@ fig7= figure();
 %     set(fig7, 'Position', [fig7.Position(1:2)-[width,height]*100 width*100, height*100]); %<- Set size
     set(fig7, 'Position', [100,100 width*100, height*100]); %<- Set size
 
+    colormap(strainScheme)%     colorbar
+    
+% video parameters 
 vid = VideoWriter(['figs' filesep animation_name ],'MPEG-4');
 vid.Quality = 100;
 vid.FrameRate = 60;
-% v.FileFormat = 'mp4';
+% v.FileFormat = 'mp4';=
+open(vid); 
 
-open(vid);
+for j = 1:1:len10 
 
-colormap(strainScheme)%     colorbar
-% for j = 1:10:len10
-for j = 1:1:len10
-% for j = 1:1:30
-    % -------------------------------------------------------------    
+
+    % Plt haltere flapping  -------------------------------------------------------------    
     subplot(4,2,[1:2:5])
     
     frame = start1 + round(j/10);
@@ -329,33 +182,17 @@ for j = 1:1:len10
             yBulbTranspose(jj,k) = xyzT(2);
             zBulbTranspose(jj,k) = xyzT(3);
         end
-    end
-
-%     s2 = surf(Xb(:,:,frame),Yb(:,:,frame),Zb(:,:,frame),Cb(:,:,frame));
-%     Cb = ones(size(Cb))*0.2;
-%     s2 = surf( squeeze( Xb(:,:,frame)), ...
-%         squeeze( Yb(:,:,frame)),...
-%         squeeze( Zb(:,:,frame)),...
-%         squeeze( Cb(:,:,frame)));
-%     
+    end 
     sStalk = surf( squeeze( XbStalk(:,:,j)), ...
         squeeze( YbStalk(:,:,j)),...
         squeeze( ZbStalk(:,:,j)),...
-        squeeze( Cb(:,:,1)));
-    
-    
-    
-    
-%         set(s2,surfParamForeground{:})
-%     centerPoint = [( FEA(1 ).xyzPoints(ImaxBottom,frame,1) + FEA(1 ).xyzPoints(ImaxTop,frame,1))/2;
-%                 ( FEA(1 ).xyzPoints(ImaxBottom,frame,2) + FEA(1 ).xyzPoints(ImaxTop,frame,2))/2;
-%                 ( FEA(1 ).xyzPoints(ImaxBottom,frame,3) + FEA(1 ).xyzPoints(ImaxTop,frame,3))/2];
-    s3 = surf( xBulbTranspose ,...
+        squeeze( Cstalk(:,:,1)));
+     sBulb = surf( xBulbTranspose ,...
                 yBulbTranspose  ,...
                 zBulbTranspose  ,...
-                C); 
+                Cbulb); 
         set(sStalk,surfParamForeground{:})
-        set(s3,surfParamForeground{:})
+        set(sBulb,surfParamForeground{:})
         axis equal
         caxis([-1,1]*0.0015)
         axis([-300 5500 -5500 500 -5500 5500])
@@ -363,11 +200,8 @@ for j = 1:1:len10
         view(30,15)
         axis off
         hold off 
-
-
-
-    
-    % -------------------------------------------------------------    
+ 
+    %  Plot spikes along circumference, low left panel  -------------------------------------------------------------    
     theta = 0:0.001:pi;
     subplot(4,2,[ 7])
         plot( -sin(theta)*100  +120 ,cos(theta)*100 ,'k')
@@ -409,22 +243,17 @@ for j = 1:1:len10
                     dots.MarkerFaceAlpha = rectif( 1-dt/5);
                 end
             end
-        end
-
-
+        end 
     end
         axis equal
         axis([-220,220,-100,100])
         axis off
         hold off
         
-% -------------------------------------------------------------   
+    %   Plot right panel spikes -------------------------------------------------------------   
     subplot(4,2,2:2:8) ;
         plot(  t_plot1, FEA(1).phi(1,It1) +10 ,'k')
-        hold on 
-%         rectangle('Position',[1,2.9,38,4.8],'Curvature',0,'FaceColor',[1,1,1]*0.95)
-%         rectangle('Position',[1,-2.6,38,4.8],'Curvature',0,'FaceColor',[1,1,1]*0.95)
-
+        hold on  
         plot( [1,1]*t_plot10(j), [-3,12],'k') 
 
     for kl =1:length(spike_order)
@@ -453,18 +282,17 @@ for j = 1:1:len10
         end
     end
 
-        hold off 
-        axis([0,25,-3,12])
-        xlabel('Time (ms)')
-        ylab = ylabel('Flapping angle $\phi(t)$', 'Position', [ -2 , 10, 0]); 
-        set(gca(),'YTick', [10-pi/2,10,10+pi/2] ,'YTickLabel',{'$\frac{\pi}{2}$',0,'$\frac{\pi}{2}$' } )
-        title('Spikes along circumference')
-        drawnow
-%         set(ylab, 'Units', 'Normalized');
-        set(gca, 'LooseInset', get(gca(), 'TightInset')); % remove whitespace around figure
-%         set(gca, 'LooseInset', get(gca(), 'TightInset')); % remove whitespace around figure
+    hold off 
+    axis([0,25,-3,12])
+    xlabel('Time (ms)')
+    ylab = ylabel('Flapping angle $\phi(t)$', 'Position', [ -2 , 10, 0]); 
+    set(gca(),'YTick', [10-pi/2,10,10+pi/2] ,'YTickLabel',{'$\frac{\pi}{2}$',0,'$\frac{\pi}{2}$' } )
+    title('Spikes along circumference')
+    drawnow 
+    set(gca, 'LooseInset', get(gca(), 'TightInset')); % remove whitespace around figure 
+
+    %  write video frame --------------------------------------------------
    frame = getframe(gcf);
    writeVideo(vid,frame);
-
 end
 close(vid);

@@ -3,23 +3,8 @@ clc;clear all;close all
 run('config_file.m')
 addpathFolderStructureHaltere()
 
-%% 
-loadName = 'figure2_deformLines';
-saveName = 'figure2_deformLines';
-% renew_data_load =  true
-renew_data_load =  false
-if renew_data_load
-    FEA(1).name = 'Haltere_CraneFlyLowDensityWbulb_Sphere_Om0';
-    FEA(2).name = 'Haltere_CraneFlyLowDensityt8u7wBulb_Sphere_Om10';
-    for j =  1:length(FEA)
-        tic
-        [FEA(j).xyz, ~, ~] = loadCSV( ['data' filesep  FEA(j).name], { 'eXX' });
-        toc 
-    end
-    save(['data' filesep saveName],'FEA')
-else
-    load(['data' filesep loadName],'FEA')
-end
+loadName = 'FEA_processed_data';
+load(['data' filesep loadName],'FEA')
 
 %% Figure 2
 
