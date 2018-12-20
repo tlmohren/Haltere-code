@@ -168,3 +168,13 @@ stupid_ratio = 15/16;
 myfiguresize = [left, bottom, width*stupid_ratio, height*stupid_ratio];
 set(fig3, 'PaperPosition', myfiguresize);
 print(fig3, ['figs' filesep 'Figure2_deformBulb'], '-dsvg', '-r600');
+
+
+%% 
+figure();
+    subplot(311) 
+    plot(  FEA(8).yAngle  -FEA(2).yAngle  )
+    subplot(312)
+    plot(  FEA(10).yAngle  -FEA(4).yAngle  )
+    subplot(313)
+    plot(  FEA(12).yAngle(1:150)  -FEA(6).yAngle(1:150)   )

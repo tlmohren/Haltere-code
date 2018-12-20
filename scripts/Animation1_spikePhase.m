@@ -3,6 +3,7 @@ clc;clear all;close all
 addpathFolderStructureHaltere()
 run('config_file.m')
 
+animation_name = 'haltereSpiking_highQualityTest';
 %%
 loadName = 'figure4_strainData';
 saveName = 'figure4_strainData';
@@ -139,17 +140,14 @@ spike_order = [5:13, 13:16, 1:5];
 %%
 
 
+FEA(1).xrtheta(:,1) = FEA(1).xyz(:,1);
+FEA(1).xrtheta(:,2) = sqrt( FEA(1).xyz(:,2).^2  +  FEA(1).xyz(:,3).^2 ); 
+FEA(1).xrtheta(:,3) = wrapTo2Pi(  atan2( FEA(1).xyz(:,3), FEA(1).xyz(:,2) ) +pi -0.02 )+0.02;
 
-
-EA(1).xrtheta(:,1) = FEA(1).xyz(:,1);
-FEA(1).xrtheta(:,2) = sqrt( FEA(1).xyz(:,2).^2  +  FEA(1).xyz(:,3).^2 );
-% FEA(1).xrtheta(:,3) = wrapTo2Pi(  atan2( FEA(1).xyz(:,3), FEA(1).xyz(:,2) ) +pi  );
-FEA(1).xrtheta(:,3) = wrapTo2Pi(  atan2( FEA(1).xyz(:,3), FEA(1).xyz(:,2) ) +pi -0.06 )+0.06;
-FEA(2).xrtheta = FEA(1).xrtheta;
 
 theta = linspace(0,2*pi,17);
 theta(1) = 2*pi;
-
+xDes = 0:150:4500; 
 for j = 1:200
     for k = 1:length(xDes)
         dx = abs(FEA(1).xrtheta(:,1)-xDes(k) );
@@ -162,59 +160,216 @@ for j = 1:200
            Xb(k,l,j) = FEA(1).xyzPoints(I,j,1);
            Yb(k,l,j) = FEA(1).xyzPoints(I,j,2);
            Zb(k,l,j) = FEA(1).xyzPoints(I,j,3);
-           Cb(k,l,j) = FEA(1).strain(I,j);
-%            k,l
+           Cb(k,l,j) = FEA(1).strain(I,j); 
         end
     end
 end
-FEA_n = 1; 
+% 1 = 1; 
 
-[z,y,x] = ellipsoid(0,0,0,440,440,440,16);
+% [z,y,xBulb] = ellipsoid(0,0,0,440,440,440,16);
 
 colormap(strainScheme)%     colorbar
-C = ones(size(x))*0.2;
-ImaxBottom = 155;
-ImaxTop = 39;
+
+%% make intermediate haltere positions 
+tOrig = 1:26;
+phiOrig = FEA(1).phi(start1: (start1+len1-1));
+tNew = 1:0.1:26; 
+phiInterp = interp1(tOrig,phiOrig, tNew );
+
+%% 
 
 
-spike_order = [5:13, fliplr([13:16, 1:5]) ];
+[zBulb,yBulb,xBulb] = ellipsoid(0,0,0,440,440,440,16);
+xBulb = xBulb + 4800; 
+
+FEA(1).xrtheta(:,1) = FEA(1).xyz(:,1);
+FEA(1).xrtheta(:,2) = sqrt( FEA(1).xyz(:,2).^2  +  FEA(1).xyz(:,3).^2 ); 
+FEA(1).xrtheta(:,3) = wrapTo2Pi(  atan2( FEA(1).xyz(:,3), FEA(1).xyz(:,2) ) +pi -0.02 )+0.02;
+
+
+XbStalk = zeros(length(xDes), length(theta),200); 
+YbStalk = XbStalk;
+ZbStalk = XbStalk; 
+
+for j = 1:length(phiInterp)
+    j 
+    for k=1:length(xDes)
+        dx = abs(FEA(1).xrtheta(:,1)-xDes(k) );
+        dr = abs(FEA(1).xrtheta(:,2)-150 );
+        for l = 1:length(theta)
+    %         theta(k)
+            da = abs(FEA(1).xrtheta(:,3) - theta(l) );
+            J = dx.^2 + dr.^2+ (da*150.^2);
+            [V,I] = min(J); 
+           
+           
+            xyzTemp = [FEA(1).xyz(I,1), FEA(1).xyz(I,2), FEA(1).xyz(I,3) ];
+
+            eul_2 = euler_angle('Y',phiInterp(j) )^-1;
+            
+            xyzTranspose =eul_2*xyzTemp'; 
+            
+            XbStalk(k,l,j) = xyzTranspose(1) ; 
+            YbStalk(k,l,j) = xyzTranspose(2) ; 
+            ZbStalk(k,l,j) = xyzTranspose(3) ; 
+            
+           
+        end
+    end
+end
 
 
 
 
 
 
-surfParamForeground = {'EdgeAlpha',0};
 
-rectif = @(x) (x<=1)*x ;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 
 %% 
-        
-% v = VideoWriter('spikeAnimation_V1.avi');
-% v = VideoWriter('spikeAnimation_V2','avi');
-% v = VideoWriter('spikeAnimation_V3','MPEG-4');
+C = ones(size(xBulb))*0;
+ImaxBottom = 155;
+ImaxTop = 39;
+
+
+spike_order = [5:13, fliplr([13:16, 1:5]) ]; 
+surfParamForeground = {'EdgeAlpha',0.4 };
+
+% surfParamForeground = {'EdgeAlpha',0.4};
+rectif = @(x) (x<=1)*x ;
+ 
+
+%% 
+ 
+ 
+fsz = 14;
+set(0,'DefaultAxesFontSize',fsz)% .
+set(0,'DefaultLegendFontSize',fsz)% .
 
 fig7= figure();
-    width = 5;     % Width in inches,   find column width in paper 
-    height = 5;    % Height in inches
+    width = 12;     % Width in inches,   find column width in paper 
+    height = 10;    % Height in inches
 %     set(fig7, 'Position', [fig7.Position(1:2)-[width,height]*100 width*100, height*100]); %<- Set size
     set(fig7, 'Position', [100,100 width*100, height*100]); %<- Set size
 
-v = VideoWriter(['figs' filesep 'spikeAnimation_V4.avi']);
-v.Quality = 100;
+vid = VideoWriter(['figs' filesep animation_name ],'MPEG-4');
+vid.Quality = 100;
+vid.FrameRate = 60;
 % v.FileFormat = 'mp4';
 
-open(v);
+open(vid);
 
+colormap(strainScheme)%     colorbar
 % for j = 1:10:len10
 for j = 1:1:len10
+% for j = 1:1:30
+    % -------------------------------------------------------------    
+    subplot(4,2,[1:2:5])
+    
+    frame = start1 + round(j/10);
+%     frame = start1+j
+    
+    plot3( [0,1]*4e3,[0,1]*0,[0,1]*0 ,'k') 
+    hold on
+    plot3( [0,1]*0,[0,-1]*4e3,[0,1]*0 ,'k') 
+    plot3( [0,1]*0,[0,1]*0,[0,1]*4e3 ,'k') 
+     text(4.3e3,0,0,'X')
+     text(0,-5.3e3,0,'Y')
+     text(-100,0,4.5e3,'Z')
+    angles = [0,  phiInterp(j),0];
+    
+    for jj = 1:size(xBulb,1)
+        for k = 1:size(xBulb,2)
+            xyzTemp = [xBulb(jj,k), yBulb(jj,k), zBulb(jj,k) ];
+
+                    eul_1 = [ 1       0                     0;...
+                                0,  cos( angles(1) ),  - sin(  angles(1) )  ; ...
+                               0   sin(  angles(1) ) cos(  angles(1) )  ]^-1;
+                    eul_2 = [cos(  angles(2))      0       sin( angles(2)) ; ...
+                                0              1       0 ;...
+                                -sin( angles(2))    0        cos(  angles(2))]^-1;
+
+                    eul_3 = [cos(  angles(3))   sin(  angles(3))    0 ; ...
+                                 -sin(  angles(3)) cos(  angles(3))     0 ;...
+                                 0          0               1]^-1;
+            xyzT = eul_1*eul_2*eul_3*xyzTemp'; 
+            xBulbTranspose(jj,k) = xyzT(1);
+            yBulbTranspose(jj,k) = xyzT(2);
+            zBulbTranspose(jj,k) = xyzT(3);
+        end
+    end
+
+%     s2 = surf(Xb(:,:,frame),Yb(:,:,frame),Zb(:,:,frame),Cb(:,:,frame));
+%     Cb = ones(size(Cb))*0.2;
+%     s2 = surf( squeeze( Xb(:,:,frame)), ...
+%         squeeze( Yb(:,:,frame)),...
+%         squeeze( Zb(:,:,frame)),...
+%         squeeze( Cb(:,:,frame)));
+%     
+    sStalk = surf( squeeze( XbStalk(:,:,j)), ...
+        squeeze( YbStalk(:,:,j)),...
+        squeeze( ZbStalk(:,:,j)),...
+        squeeze( Cb(:,:,1)));
+    
+    
+    
+    
+%         set(s2,surfParamForeground{:})
+%     centerPoint = [( FEA(1 ).xyzPoints(ImaxBottom,frame,1) + FEA(1 ).xyzPoints(ImaxTop,frame,1))/2;
+%                 ( FEA(1 ).xyzPoints(ImaxBottom,frame,2) + FEA(1 ).xyzPoints(ImaxTop,frame,2))/2;
+%                 ( FEA(1 ).xyzPoints(ImaxBottom,frame,3) + FEA(1 ).xyzPoints(ImaxTop,frame,3))/2];
+    s3 = surf( xBulbTranspose ,...
+                yBulbTranspose  ,...
+                zBulbTranspose  ,...
+                C); 
+        set(sStalk,surfParamForeground{:})
+        set(s3,surfParamForeground{:})
+        axis equal
+        caxis([-1,1]*0.0015)
+        axis([-300 5500 -5500 500 -5500 5500])
+        shading faceted
+        view(30,15)
+        axis off
+        hold off 
+
+
+
     
     % -------------------------------------------------------------    
     theta = 0:0.001:pi;
-    subplot(4,2,[5,7])
+    subplot(4,2,[ 7])
         plot( -sin(theta)*100  +120 ,cos(theta)*100 ,'k')
     hold on 
         plot( sin(theta)*100 +120 ,cos(theta)*100 ,'k')
@@ -233,7 +388,7 @@ for j = 1:1:len10
             try 
                 if any(spike_ind_temp) && ( t_plot10(j) > t_plot10(  spike_ind_temp(which_) - start10 ) )   && ( t_plot10(j) < 5+ t_plot10(  spike_ind_temp(which_) - start10 ) ) 
                     dt = t_plot10(j) - t_plot10(  spike_ind_temp(which_) - start10 );
-                     dots = scatter( 100/150*FEA(1).xyz( FEA(1).circleInds( k ),2 )-120  ,  100/150*FEA(1).xyz( FEA(1).circleInds( k ),3 ) ,'k','filled');
+                     dots = scatter( 100/150*FEA(1).xyz( FEA(1).circleInds( k ),2 )-120  ,  100/150*FEA(1).xyz( FEA(1).circleInds( k ),3 ),20 ,'k','filled');
                     dots.MarkerFaceAlpha = rectif( 1-dt/5);
                 end
             end
@@ -250,7 +405,7 @@ for j = 1:1:len10
             try 
                 if any(spike_ind_temp) && ( t_plot10(j) > t_plot10(  spike_ind_temp(which_) - start10 ) )   && ( t_plot10(j) < 5+ t_plot10(  spike_ind_temp(which_) - start10 ) ) 
                     dt = t_plot10(j) - t_plot10(  spike_ind_temp(which_) - start10 );
-                     dots = scatter( 100/150*FEA(1).xyz( FEA(1).circleInds( k ),2 )+120  ,  100/150*FEA(1).xyz( FEA(1).circleInds( k ),3 )  ,'r','filled');
+                     dots = scatter( 100/150*FEA(1).xyz( FEA(1).circleInds( k ),2 )+120  ,  100/150*FEA(1).xyz( FEA(1).circleInds( k ),3 )  ,20,'r','filled');
                     dots.MarkerFaceAlpha = rectif( 1-dt/5);
                 end
             end
@@ -259,68 +414,12 @@ for j = 1:1:len10
 
     end
         axis equal
-        axis([-250,250,-100,100])
+        axis([-220,220,-100,100])
         axis off
         hold off
         
-    % -------------------------------------------------------------    
-    subplot(4,2,[1,3])
-    
-    colormap(strainScheme)%     colorbar
-    frame = start1 + round(j/10);
-    plot3( [0,1]*4e3,[0,1]*0,[0,1]*0 ,'k') 
-    hold on
-    plot3( [0,1]*0,[0,-1]*4e3,[0,1]*0 ,'k') 
-    plot3( [0,1]*0,[0,1]*0,[0,1]*4e3 ,'k') 
-     text(4.3e3,0,0,'y')
-     text(0,-5.3e3,0,'x')
-     text(-100,0,4.5e3,'z')
-    angles = [0, -FEA(FEA_n ).phi(frame),0];
-    for jj = 1:size(x,1)
-        for k = 1:size(x,2)
-            xyzTemp = [x(jj,k), y(jj,k), z(jj,k) ];
-
-                    eul_1 = [ 1       0                     0;...
-                                0,  cos( angles(1) ),  - sin(  angles(1) )  ; ...
-                               0   sin(  angles(1) ) cos(  angles(1) )  ]^-1;
-                    eul_2 = [cos(  angles(2))      0       sin( angles(2)) ; ...
-                                0              1       0 ;...
-                                -sin( angles(2))    0        cos(  angles(2))]^-1;
-
-                    eul_3 = [cos(  angles(3))   sin(  angles(3))    0 ; ...
-                                 -sin(  angles(3)) cos(  angles(3))     0 ;...
-                                 0          0               1]^-1;
-            xyzT = eul_1*eul_2*eul_3*xyzTemp'; 
-            xOm10(jj,k) = xyzT(1);
-            yOm10(jj,k) = xyzT(2);
-            zOm10(jj,k) = xyzT(3);
-        end
-    end
-
-%     s2 = surf(Xb(:,:,frame),Yb(:,:,frame),Zb(:,:,frame),Cb(:,:,frame));
-    Cb = ones(size(Cb))*0.2;
-    s2 = surf(Xb(:,:,frame),Yb(:,:,frame),Zb(:,:,frame),Cb(:,:,frame));
-        set(s2,surfParamForeground{:})
-    centerPoint = [( FEA(FEA_n ).xyzPoints(ImaxBottom,frame,1) + FEA(FEA_n ).xyzPoints(ImaxTop,frame,1))/2;
-                ( FEA(FEA_n ).xyzPoints(ImaxBottom,frame,2) + FEA(FEA_n ).xyzPoints(ImaxTop,frame,2))/2;
-                ( FEA(FEA_n ).xyzPoints(ImaxBottom,frame,3) + FEA(FEA_n ).xyzPoints(ImaxTop,frame,3))/2];
-    s3 = surf( xOm10 + centerPoint(1),...
-                yOm10 + centerPoint(2) ,...
-                zOm10 + centerPoint(3)  ,...
-                C);
-        set(s3,surfParamForeground{:})
-        axis equal
-        caxis([-1,1]*0.0015)
-        axis([-300 5500 -5500 500 -5500 5500])
-        shading flat
-        view(30,15)
-        axis off
-        hold off 
-
-
-
 % -------------------------------------------------------------   
-    subplot(122) ;
+    subplot(4,2,2:2:8) ;
         plot(  t_plot1, FEA(1).phi(1,It1) +10 ,'k')
         hold on 
 %         rectangle('Position',[1,2.9,38,4.8],'Curvature',0,'FaceColor',[1,1,1]*0.95)
@@ -357,13 +456,15 @@ for j = 1:1:len10
         hold off 
         axis([0,25,-3,12])
         xlabel('Time (ms)')
-        ylabel('Flapping angle $\phi(t)$')
+        ylab = ylabel('Flapping angle $\phi(t)$', 'Position', [ -2 , 10, 0]); 
         set(gca(),'YTick', [10-pi/2,10,10+pi/2] ,'YTickLabel',{'$\frac{\pi}{2}$',0,'$\frac{\pi}{2}$' } )
         title('Spikes along circumference')
         drawnow
-
+%         set(ylab, 'Units', 'Normalized');
+        set(gca, 'LooseInset', get(gca(), 'TightInset')); % remove whitespace around figure
+%         set(gca, 'LooseInset', get(gca(), 'TightInset')); % remove whitespace around figure
    frame = getframe(gcf);
-   writeVideo(v,frame);
+   writeVideo(vid,frame);
 
 end
-close(v);
+close(vid);

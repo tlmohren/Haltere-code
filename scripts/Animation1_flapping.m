@@ -111,9 +111,13 @@ t_ind = 100;
 deform_mult = 30;
 OOP_mult = 300;
 xDes = [0:150:4800];
-surfParamBackground = {'FaceAlpha',0.2,'EdgeAlpha',0.2};
-surfParamForeground = {'EdgeAlpha',0.2};
+% surfParamBackground = {'FaceAlpha',0.2,'EdgeAlpha',0.2};
+% surfParamForeground = {'EdgeAlpha',0.2};
     
+surfParamBackground = {'FaceAlpha',0.2,'EdgeAlpha',0.1};
+surfParamBackgroundTwist = {'FaceAlpha',0.2,'EdgeAlpha',0.2};
+surfParamBackgroundTwistStalk = {'FaceAlpha',0,'EdgeAlpha',0.1};
+surfParamForeground = {'EdgeAlpha',0.4};
 %% 
 FEA(1).xrtheta(:,1) = FEA(1).xyz(:,1);
 FEA(1).xrtheta(:,2) = sqrt( FEA(1).xyz(:,2).^2  +  FEA(1).xyz(:,3).^2 );
