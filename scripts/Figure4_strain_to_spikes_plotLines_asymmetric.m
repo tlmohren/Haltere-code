@@ -6,6 +6,8 @@ run('config_file.m')
 loadName = 'FEA_processed_data';
 load(['data' filesep loadName],'FEA')
 
+FEA(13).circleInds = FEA(1).circleInds;
+FEA(14).circleInds = FEA(2).circleInds;
 %% Strain plot prep 
 selected_dots = 5:9;
 len = 101;
@@ -28,7 +30,7 @@ fig1 = figure();
 t_plot = (0:len-1)*0.001;
 
 subplot(6,1,1)
-plot(t_plot, FEA(1).phi(It),'k' )
+plot(t_plot, FEA(13).phi(It),'k' )
     axPhi= { 'XLim',[0,t_plot(end)],'XTick',[0:0.05:t_plot(end)],'XTickLabel',{'','',''},...
         'Xgrid','on','box','off','YTick',[-pi/2,0,pi/2],'YTickLabel',{'$-\pi/2$','0','$\pi/2$'} }; 
     ax = gca();
@@ -39,7 +41,7 @@ for kl =1:length(selected_dots)
     k = selected_dots(kl);
     subplot(6,1,kl+1)
     hold on
-    for j = [1,2] 
+    for j = [13,14] 
         plot( t_plot,FEA(j).strain(FEA(j).circleInds(k),It )  )
     end
     if kl == 3
@@ -94,7 +96,7 @@ parse_extra = 5;
 axCircleSpike= { 'YLim',[0,1.6],'XLim',[0,t_plot(end)],'XTick',[0:0.05:t_plot(end)],'Xgrid','on'}; 
 axZeroSpike= { 'YLim',[0,1.6],'XLim',[0,t_plot(end)],'XTick',[0:0.05:t_plot(end)],'XTickLabel',{'','',''},'Xgrid','on'}; 
   
-for j = [1,2] 
+for j = [13,14] 
     for k = 1:length(FEA(j).circleInds)
      tL = size(FEA(j).strain,2);
         strainTemp = FEA(j).strain( FEA(j).circleInds(k),:);
@@ -117,7 +119,7 @@ fig2= figure();
     set(fig2, 'Position', [fig2.Position(1:2)+[width*1,0]*100 width*100, height*100]); %<- Set size
 
 subplot(6,1,1)
-plot(t_plot, FEA(1).phi(It),'k' ) 
+plot(t_plot, FEA(13).phi(It),'k' ) 
     ax = gca();
     set(ax,axPhi{:})
     ylabel('Flapping angle $\phi$ (rad)')
@@ -126,13 +128,13 @@ for kl =1:length(selected_dots)
     k = selected_dots(kl);
     subplot(6,1,kl+1)
     hold on
-    for j = [1,2] 
+    for j = [13,14] 
         spike_ind_temp = FEA(j).spikeInds{k};
             which_ = spike_ind_temp<=It10(end);
        plot( t_plot10,FEA(j).pFire( k , It10) )
         if any(spike_ind_temp)
            plot( [1,1]'*t_plot10(  spike_ind_temp(which_) - start10 ),...
-               ([1.75 ; 1.55] - (j)/4 )  * ones(1, length(  spike_ind_temp(which_) )),'k')
+               ([1.75 ; 1.55] - (j-10)/4 )  * ones(1, length(  spike_ind_temp(which_) )),'k')
            FEA(j).timing{k} = t_plot10(  spike_ind_temp(which_) - start10 );
 
         end

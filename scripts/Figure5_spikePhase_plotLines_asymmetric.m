@@ -6,9 +6,10 @@ run('config_file.m')
 loadName = 'FEA_processed_data';
 load(['data' filesep loadName],'FEA')
 
-FEA(11).circleInds = FEA(1).circleInds;
-FEA(12).circleInds = FEA(2).circleInds;
 %% apply neural encoding
+
+FEA(13).circleInds = FEA(1).circleInds;
+FEA(14).circleInds = FEA(2).circleInds;
 
 STAfreq = 0.5;
 STAwidth = 5;
@@ -51,15 +52,15 @@ for jj = 1:length(FEA)/2
 %             strainConv = conv( [zeros(1,length(STA)-1),strainInterp], ( STA), 'valid');
             calib_param(j,k) = max(  strainConv );
     %         FEA(j).pFire(k,:) = NLDfun( strainConv/calib_param(j,k) );
-            if jj ~=7
-                j
+%             if jj ~=7
+%                 j
                 FEA(j).pFire(k,:) = NLDfun( strainConv/calib_param_max(k) );
                 FEA(j).spikeInds{k} = findSpikes( FEA(j).pFire(k,:) ); 
-            elseif jj == 7
-                
-                FEA(j).pFire(k,:) = NLDfun( strainConv/calib_param_cross(k) );
-                FEA(j).spikeInds{k} = findSpikes( FEA(j).pFire(k,:) ); 
-            end
+%             elseif jj == 7
+%                 
+%                 FEA(j).pFire(k,:) = NLDfun( strainConv/calib_param_cross(k) );
+%                 FEA(j).spikeInds{k} = findSpikes( FEA(j).pFire(k,:) ); 
+%             end
         end
     end
     for k = 1:length(FEA(j).circleInds)
@@ -89,8 +90,8 @@ fig7= figure();
     set(fig7, 'Position', [fig7.Position(1:2)-[width,height]*100 width*100, height*100]); %<- Set size
 
 subplot(1,2,1); hold on 
-    scatter( FEA(1).xyz( FEA(1).circleInds(5:13),2 ),  FEA(1).xyz( FEA(1).circleInds(5:13),3 ) +150+350,'k','filled')
-    scatter( FEA(1).xyz( FEA(1).circleInds( [13:16, 1:5] ),2 ),  FEA(1).xyz( FEA(1).circleInds( [13:16, 1:5] ),3 ) +150 ,'k','filled')
+    scatter( FEA(13).xyz( FEA(13).circleInds(5:13),2 ),  FEA(13).xyz( FEA(13).circleInds(5:13),3 ) +150+350,'k','filled')
+    scatter( FEA(13).xyz( FEA(13).circleInds( [13:16, 1:5] ),2 ),  FEA(13).xyz( FEA(13).circleInds( [13:16, 1:5] ),3 ) +150 ,'k','filled')
     theta = 0:0.001:pi;
     plot( -sin(theta)*150,cos(theta)*150 +150+350,'k')
     plot( sin(theta)*150,cos(theta)*150 +150,'k')
@@ -101,11 +102,11 @@ subplot(1,2,1); hold on
 subplot(122) ; hold on 
 %     rectangle('Position',[1,2.9,24,4.8],'Curvature',0,'FaceColor',[1,1,1]*0.95)
 %     rectangle('Position',[1,-2.6,24,4.8],'Curvature',0,'FaceColor',[1,1,1]*0.95)
-    plot(  t_plot1, FEA(1).phi(1,It1) +10 ,'k')
+    plot(  t_plot1, FEA(13).phi(1,It1) +10 ,'k')
 
 for kl = 1:length(spike_order)
     k = spike_order( kl ) ;
-    spike_ind_temp = FEA(1).spikeInds{k};
+    spike_ind_temp = FEA(13).spikeInds{k};
         which_ = (spike_ind_temp<=It10(end)) & (spike_ind_temp>=It10(1));
 
     if any(spike_ind_temp) & kl <=9
@@ -116,7 +117,7 @@ for kl = 1:length(spike_order)
            ([9 ; 8.6] - kl*0.5 - 2)  * ones(1, length(  spike_ind_temp(which_) )),'k')
     end
     
-    spike_ind_temp = FEA( 2).spikeInds{k};
+    spike_ind_temp = FEA(14).spikeInds{k};
         which_ = (spike_ind_temp<=It10(end)) & (spike_ind_temp>=It10(1));
 
     if any(spike_ind_temp) & kl <=9
